@@ -1,3 +1,4 @@
+import pandas as pd
 from pandas import DataFrame
 
 from qt_core import *
@@ -35,7 +36,14 @@ class PandasModel(QAbstractTableModel):
 
         return None
 
-    def setData(self, index, value, role):
+    def dataX(self, rowIndex, colIndex, role=Qt.DisplayRole):
+        if role == Qt.DisplayRole or role == Qt.EditRole:
+            row = rowIndex
+            col = colIndex
+            return str(self._data.iloc[row, col])
+        return None
+
+    def setData(self, index, value, role=Qt.EditRole):
         if role == Qt.EditRole:
             row = index.row()
             col = index.column()
@@ -45,7 +53,6 @@ class PandasModel(QAbstractTableModel):
                 return False
             self.dataChanged.emit(index, index)
             return True
-
         return False
 
     def flags(self, index):
@@ -55,6 +62,19 @@ class PandasModel(QAbstractTableModel):
         self.beginRemoveRows(parent, row, row)
         self._data.drop(self._data.index[row], inplace=True)
         self.endRemoveRows()
+
+    # def appendData(self, data):
+    #     rowCount = self.rowCount()
+    #     newFrame = DataFrame(data, columns=self._data.columns)
+    #     self.beginInsertRows(QModelIndex(), rowCount, rowCount)
+    #     self._data = pd.concat([self._data, newFrame], ignore_index=True)
+    #     self.endInsertRows()
+
+    def appendRow(self, data):
+        rowCount = self.rowCount()
+        self.beginInsertRows(QModelIndex(), rowCount, rowCount)
+        self._data.loc[rowCount] = data
+        self.endInsertRows()
 
 
 class ButtonDelegate(QStyledItemDelegate):
@@ -215,4 +235,3 @@ class PyTableViewPandas(QTableView):
         return self._style_sheet
 
     # def update_stylesheet(self, stylesheet):
-

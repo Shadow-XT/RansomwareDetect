@@ -5,7 +5,6 @@ style = '''
 QTableView */
 
 QTableView {{	
-    font-size: 18px;
 	background-color: {_bg_color};
 	padding: 5px;
 	border-radius: {_radius}px;
@@ -33,9 +32,6 @@ QHeaderView::section{{
 QTableView::horizontalHeader {{	
 	background-color: rgb(33, 37, 43);
 }}
-QTableView::veritcalHeader  {{	
-	background-color:"#FFFFFF" !important;
-}}
 QTableView QTableCornerButton::section {{
     border: none;
 	background-color: {_header_horizontal_color};
@@ -44,20 +40,18 @@ QTableView QTableCornerButton::section {{
 }}
 QHeaderView::section:horizontal
 {{
-    font-size: 19px;
     border: none;
 	background-color: {_header_horizontal_color};
 	padding: 3px;
 }}
 QHeaderView::section:vertical
 {{
-    font-size: 18px;
     border: none;
 	background-color: {_header_vertical_color};
 	padding-left: 5px;
     padding-right: 5px;
-    /*border-bottom: 1px solid {_bottom_line_color};
-    margin-bottom: 1px;*/
+    border-bottom: 1px solid {_bottom_line_color};
+    margin-bottom: 1px;
 }}
 
 

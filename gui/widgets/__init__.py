@@ -56,10 +56,12 @@ from .py_table_widget import PyTableWidget
 
 # PY MESSAGEBOX
 # ///////////////////////////////////////////////////////////////
-from .py_messagebox import PyMessageBox
+from .py_messagebox_single import PyMessageBoxSingle
+from .py_messagebox_double import PyMessageBoxConfirm
 
 # PY TABLE VIEW
 # ///////////////////////////////////////////////////////////////
+from .py_table_view_with_button import PyTableViewWithButton
 from .py_table_view import PyTableView
 
 # PY TABLE VIEW PANDAS

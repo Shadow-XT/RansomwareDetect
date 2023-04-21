@@ -43,7 +43,7 @@ class SetupMainWindow:
             "is_active": True
         },
         {
-            "btn_icon": "icon_send.svg",  # 初始化设置文件菜单
+            "btn_icon": "icon_init.svg",  # 初始化设置文件菜单
             "btn_id": "btn_init",
             "btn_text": "配置诱饵文件",
             "btn_tooltip": "诱饵文件配置页面",
@@ -51,10 +51,18 @@ class SetupMainWindow:
             "is_active": False
         },
         {
-            "btn_icon": "icon_send.svg",  # 执行检测菜单
+            "btn_icon": "icon_monitor.svg",  # 执行检测菜单
             "btn_id": "btn_run",
             "btn_text": "执行检测",
             "btn_tooltip": "执行检测页面",
+            "show_top": True,
+            "is_active": False
+        },
+        {
+            "btn_icon": "icon_database_2.svg",  # 数据库菜单
+            "btn_id": "btn_database",
+            "btn_text": "程序数据库",
+            "btn_tooltip": "程序数据库页面",
             "show_top": True,
             "is_active": False
         },
@@ -66,51 +74,51 @@ class SetupMainWindow:
             "show_top": True,
             "is_active": False
         },
-        {
-            "btn_icon": "icon_add_user.svg",
-            "btn_id": "btn_add_user",
-            "btn_text": "Add Users",
-            "btn_tooltip": "Add users",
-            "show_top": True,
-            "is_active": False
-        },
-        {
-            "btn_icon": "icon_file.svg",
-            "btn_id": "btn_new_file",
-            "btn_text": "New File",
-            "btn_tooltip": "Create new file",
-            "show_top": True,
-            "is_active": False
-        },
-        {
-            "btn_icon": "icon_folder_open.svg",
-            "btn_id": "btn_open_file",
-            "btn_text": "Open File",
-            "btn_tooltip": "Open file",
-            "show_top": True,
-            "is_active": False
-        },
-        {
-            "btn_icon": "icon_save.svg",
-            "btn_id": "btn_save",
-            "btn_text": "Save File",
-            "btn_tooltip": "Save file",
-            "show_top": True,
-            "is_active": False
-        },
+        # {
+        #     "btn_icon": "icon_add_user.svg",
+        #     "btn_id": "btn_add_user",
+        #     "btn_text": "Add Users",
+        #     "btn_tooltip": "Add users",
+        #     "show_top": True,
+        #     "is_active": False
+        # },
+        # {
+        #     "btn_icon": "icon_file.svg",
+        #     "btn_id": "btn_new_file",
+        #     "btn_text": "New File",
+        #     "btn_tooltip": "Create new file",
+        #     "show_top": True,
+        #     "is_active": False
+        # },
+        # {
+        #     "btn_icon": "icon_folder_open.svg",
+        #     "btn_id": "btn_open_file",
+        #     "btn_text": "Open File",
+        #     "btn_tooltip": "Open file",
+        #     "show_top": True,
+        #     "is_active": False
+        # },
+        # {
+        #     "btn_icon": "icon_save.svg",
+        #     "btn_id": "btn_save",
+        #     "btn_text": "Save File",
+        #     "btn_tooltip": "Save file",
+        #     "show_top": True,
+        #     "is_active": False
+        # },
         {
             "btn_icon": "icon_info.svg",
             "btn_id": "btn_info",
-            "btn_text": "Information",
-            "btn_tooltip": "Open informations",
+            "btn_text": "系统信息",
+            "btn_tooltip": "打开信息页面",
             "show_top": False,
             "is_active": False
         },
         {
             "btn_icon": "icon_settings.svg",
             "btn_id": "btn_settings",
-            "btn_text": "Settings",
-            "btn_tooltip": "Open settings",
+            "btn_text": "设置",
+            "btn_tooltip": "打开设置页面",
             "show_top": False,
             "is_active": False
         }
@@ -283,12 +291,25 @@ class SetupMainWindow:
             ['Tom', 50, 'Beijing'],
             ['Jack', 45, 'Shanghai'],
             ['Lily', 20, 'Shenzhen'],
-        ], columns=['文件', '大小', '类型'])
+        ], columns=['文件', '类型', '大小'])
         # self.model.setItemData()
         # self.file_table.setModel(data)
-        self.ui.file_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        # self.ui.file_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.ui.load_pages.hlayout2_table.addWidget(self.ui.file_table)
         self.ui.file_table.setModel(data)
+        self.ui.file_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.Fixed)
+        self.ui.file_table.setColumnWidth(0, 500)
+        # 将其它列设置为指定宽度
+        self.ui.file_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.Fixed)
+        self.ui.file_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.Stretch)
+        self.ui.file_table.setColumnWidth(1, 200)
+        self.ui.file_table.setColumnWidth(2, 50)
+        self.ui.file_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.Stretch)
+        self.ui.file_table.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
+        colorx = self.themes["app_color"]["bg_three"]
+        self.ui.file_table.verticalHeader().setStyleSheet(f'background-color: {colorx};')
+
         # self.ui.load_pages.hlayout2_table.setCentralWidget(self.file_table)
         # self.setCentralWidget(self.file_table)
 
@@ -316,13 +337,52 @@ class SetupMainWindow:
             bg_color_hover=self.themes["app_color"]["dark_three"],
             bg_color_pressed=self.themes["app_color"]["dark_four"]
         )
+        self.ui.btn_clear_file = PyPushButton(
+            text="清空文件",
+            radius=8,
+            color=self.themes["app_color"]["text_foreground"],
+            bg_color=self.themes["app_color"]["dark_one"],
+            bg_color_hover=self.themes["app_color"]["dark_three"],
+            bg_color_pressed=self.themes["app_color"]["dark_four"]
+        )
         self.ui.load_pages.hlayout2_button.addWidget(self.ui.btn_load_profile)
         self.ui.load_pages.hlayout2_button.addWidget(self.ui.btn_save_profile)
         self.ui.load_pages.hlayout2_button.addWidget(self.ui.btn_load_file)
+        self.ui.load_pages.hlayout2_button.addWidget(self.ui.btn_clear_file)
         self.ui.load_pages.label_set_file.setStyleSheet("font-size: 25px")
 
         # 页面3（运行检测）
+        # 添加运行表格
+        self.ui.run_table = PyTableView(
+            color=self.themes["app_color"]["text_foreground"],
+            selection_color=self.themes["app_color"]["context_color"],
+            bg_color=self.themes["app_color"]["bg_two"],
+            header_horizontal_color=self.themes["app_color"]["dark_two"],
+            header_vertical_color=self.themes["app_color"]["bg_three"],
+            bottom_line_color=self.themes["app_color"]["bg_three"],
+            grid_line_color=self.themes["app_color"]["bg_one"],
+            scroll_bar_bg_color=self.themes["app_color"]["bg_one"],
+            scroll_bar_btn_color=self.themes["app_color"]["dark_four"],
+            context_color=self.themes["app_color"]["context_color"]
+        )
+        self.ui.run_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.ui.load_pages.hlayout3_table.addWidget(self.ui.run_table)
         # self.ui.run_table = PyTable
+        # 添加CPU使用率
+        self.ui.cpu_usage = PyCircularProgress(
+            value=80,
+            progress_color=self.themes["app_color"]["context_color"],
+            text_color=self.themes["app_color"]["text_title"],
+            font_size=14,
+            bg_color=self.themes["app_color"]["dark_four"]
+        )
+        self.ui.load_pages.vlayout3_progress.addWidget(self.ui.cpu_usage)
+        self.ui.cpu_usage.setFixedSize(150, 150)
+        self.ui.label_progress = QLabel("CPU使用率")
+        self.ui.label_progress.setStyleSheet("font-size: 20px;")
+        self.ui.load_pages.vlayout3_progress.addWidget(self.ui.label_progress)
+
+        # 添加按钮
         self.ui.btn_start = PyPushButton(
             text="开始检测",
             radius=8,
@@ -347,9 +407,18 @@ class SetupMainWindow:
             bg_color_hover=self.themes["app_color"]["dark_three"],
             bg_color_pressed=self.themes["app_color"]["dark_four"]
         )
-        self.ui.load_pages.hlayout3_process_button.addWidget(self.ui.btn_start)
-        self.ui.load_pages.hlayout3_process_button.addWidget(self.ui.btn_pause)
-        self.ui.load_pages.hlayout3_process_button.addWidget(self.ui.btn_stop)
+        self.ui.btn_restart = PyPushButton(
+            text="重新检测",
+            radius=8,
+            color=self.themes["app_color"]["text_foreground"],
+            bg_color=self.themes["app_color"]["dark_one"],
+            bg_color_hover=self.themes["app_color"]["dark_three"],
+            bg_color_pressed=self.themes["app_color"]["dark_four"]
+        )
+        self.ui.load_pages.glayout3_button.addWidget(self.ui.btn_start, 0, 0)
+        self.ui.load_pages.glayout3_button.addWidget(self.ui.btn_pause, 0, 1)
+        self.ui.load_pages.glayout3_button.addWidget(self.ui.btn_stop, 1, 0)
+        self.ui.load_pages.glayout3_button.addWidget(self.ui.btn_restart, 1, 1)
         self.ui.load_pages.label_run.setStyleSheet("font-size: 25px")
         # PAGE 2
         # CIRCULAR PROGRESS 1

@@ -1,7 +1,7 @@
 from qt_core import *
 
 
-class PyMessageBox(QMessageBox):
+class PyMessageBoxConfirm(QMessageBox):
     def __init__(self,
                  icon=None,
                  title=None,
@@ -14,10 +14,12 @@ class PyMessageBox(QMessageBox):
                  btn_bg_color=None,
                  btn_bg_color_hover=None,
                  btn_bg_color_pressed=None,
-                 buttons: dict[QMessageBox.ButtonRole, str] = None):
+                 buttons: dict[QMessageBox.ButtonRole, str] = None,
+                 width=(500, 250)):
         super().__init__(icon)
-        self.setMinimumWidth(500)
-        self.setMaximumWidth(250)
+        self.setMinimumWidth(width[0])
+
+        self.setMaximumWidth(width[1])
         # self.setWindowFlags(Qt.FramelessWindowHint)
         # self.setAttribute(Qt.WA_TranslucentBackground)
 

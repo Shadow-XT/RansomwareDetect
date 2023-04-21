@@ -1,19 +1,22 @@
-from gui.uis.windows.main_window.functions_main_window import *
-import sys
 import os
-
-from gui.widgets.py_messagebox import PyMessageBox
-# 导入qt core
-from qt_core import *
-
+import sys
 # 导入设置
 from gui.core.json_settings import Settings
-
 # 导入=主窗体
 from gui.uis.windows.main_window import *
-
+from gui.uis.windows.main_window.functions_main_window import *
 # 导入widgets
 from gui.widgets import *
+# 导入qt core
+from qt_core import *
+from util.CPUThread import CPUThread
+
+# 导入slot
+from app.slots.init_page_slots import *
+from app.slots.monitor_page_slots import *
+
+# 导入配置
+# from app.app_init_button import *
 
 #  将QT字体DPI调整为高比例4k显示器
 os.environ["QT_FONT_DPI"] = "96"
@@ -41,18 +44,21 @@ class MainWindow(QMainWindow):
 
         self.show()
 
-        self.ui.btn_load_profile.clicked.connect(self.load_profile)
-        self.ui.btn_save_profile.clicked.connect(self.save_profile)
-        self.ui.btn_load_file.clicked.connect(self.load_file)
+        self.mousePressed = False
+        # 设初始化页面
+        self.ui.btn_load_profile.clicked.connect(lambda: btn_load_profile_slot(self))
+        self.ui.btn_save_profile.clicked.connect(lambda: btn_save_profile_slot(self))
+        self.ui.btn_load_file.clicked.connect(lambda: btn_load_file_slot(self))
+        self.ui.btn_clear_file.clicked.connect(lambda: btn_clear_file_slot(self))
+        # 设置执行检测页面
+        self.ui.btn_start.clicked.connect(lambda: btn_monitor_start(self))
+        self.ui.btn_stop.clicked.connect(lambda: btn_monitor_stop(self))
+        self.ui.btn_pause.clicked.connect(lambda: btn_monitor_pause(self))
+        self.ui.btn_restart.clicked.connect(lambda: btn_monitor_restart(self))
 
-    def load_profile(self):
-        print("load profile")
-
-    def save_profile(self):
-        print("save profile")
-
-    def load_file(self):
-        print("load file")
+        self.cpu_thread = CPUThread()
+        self.cpu_thread.cpu_value_signal.connect(lambda value: self.ui.cpu_usage.set_value(value))
+        self.cpu_thread.start()
 
     # 左边菜单栏被单击时运行
     # 按对象名称/按钮id检查功能
@@ -76,12 +82,6 @@ class MainWindow(QMainWindow):
             # 加载主页页面
             MainFunctions.set_page(self, self.ui.load_pages.page_1_home)
 
-        # 部件页面按钮
-        if btn.objectName() == "btn_widgets":
-            self.ui.left_menu.select_only_one(btn.objectName())
-            # 加载部件页面
-            MainFunctions.set_page(self, self.ui.load_pages.page_2)
-
         # 初始化页面按钮
         if btn.objectName() == "btn_init":
             self.ui.left_menu.select_only_one(btn.objectName())
@@ -94,11 +94,23 @@ class MainWindow(QMainWindow):
             # 加载执行检测页面
             MainFunctions.set_page(self, self.ui.load_pages.page_3_monitor)
 
-        # LOAD USER PAGE
-        if btn.objectName() == "btn_add_user":
+        # TODO: 需要完成数据库页面的功能
+        if btn.objectName() == "btn_database":
             self.ui.left_menu.select_only_one(btn.objectName())
-            # Load Page 3 
-            MainFunctions.set_page(self, self.ui.load_pages.page_3)
+            # 加载数据库界面
+            MainFunctions.set_page(self, self.ui.load_pages.page_4_database)
+
+        # 部件页面按钮
+        if btn.objectName() == "btn_widgets":
+            self.ui.left_menu.select_only_one(btn.objectName())
+            # 加载部件页面
+            MainFunctions.set_page(self, self.ui.load_pages.page_2)
+
+        # # LOAD USER PAGE
+        # if btn.objectName() == "btn_add_user":
+        #     self.ui.left_menu.select_only_one(btn.objectName())
+        #     # Load Page 3
+        #     MainFunctions.set_page(self, self.ui.load_pages.page_3)
 
         # 信息按钮
         if btn.objectName() == "btn_info":
@@ -185,17 +197,46 @@ class MainWindow(QMainWindow):
     def resizeEvent(self, event):
         SetupMainWindow.resize_grips(self)
 
-    # 鼠标点击事件
     def mousePressEvent(self, event):
-        # SET DRAG POS WINDOW
-        # self.dragPos = event.globalPos()
-        self.dragPos = event.globalPos()
+        if not event.button() == Qt.LeftButton:
+            return
+        if event.button() == Qt.LeftButton:
+            self.mousePressed = True
+            self.dragPos = event.globalPosition().toPoint()
+
+    def mouseMoveEvent(self, event):
+        if self.mousePressed:
+            newPos = event.globalPosition().toPoint()
+            diff = newPos - self.dragPos
+            self.move(self.pos() + diff)
+            self.dragPos = newPos
+
+    def mouseReleaseEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.mousePressed = False
+            self.dragPos = QPoint(0, 0)
+
+    # 鼠标点击事件
+    # def mousePressEvent(self, event):
+    #     # SET DRAG POS WINDOW
+    #     # self.dragPos = event.globalPos()
+    #     self.dragPos = event.globalPosition().toPoint()
+
+    # # 鼠标移动事件
+    # def mouseMoveEvent(self, event):
+    #     if event.buttons() == Qt.LeftButton:
+    #         # MOVE WINDOW
+    #         # self.move(self.pos() + event.globalPos() - self.dragPos)
+    #         pos = event.globalPosition().toPoint()
+    #         if self.geometry().contains(pos):
+    #             self.move(self.pos() + pos - self.dragPos)
+    #             self.dragPos = event.globalPosition().toPoint()
+    #             event.accept()
 
     # 设置关闭事件
     def closeEvent(self, event):
-        themes = Themes().items
         # 询问是否退出，添加自定义按钮
-        msg = PyMessageBox(self, "退出程序", "你确定要退出程序吗？",
+        msg = PyMessageBoxConfirm(self, "退出程序", "你确定要退出程序吗？",
                            color=self.themes["app_color"]["dark_four"],
                            selection_color=self.themes["app_color"]["white"],
                            bg_color=self.themes["app_color"]["dark_four"],
@@ -209,6 +250,8 @@ class MainWindow(QMainWindow):
         msg.setFont(QFont("微软雅黑", 18))
         msg.exec()
         if msg.clickedButton() == msg.btn_dict["确定"]:
+            if self.cpu_thread.isRunning():
+                self.cpu_thread.stop()
             event.accept()
         elif msg.clickedButton() == msg.btn_dict["取消"]:
             event.ignore()

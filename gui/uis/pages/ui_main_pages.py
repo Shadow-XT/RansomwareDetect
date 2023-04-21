@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'main_pagesNgoFJQ.ui'
+## Form generated from reading UI file 'main_pagesPdPfKk.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.4.2
 ##
@@ -15,9 +15,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
-    QScrollArea, QSizePolicy, QStackedWidget, QVBoxLayout,
-    QWidget)
+from PySide6.QtWidgets import (QApplication, QFrame, QGridLayout, QHBoxLayout,
+    QLabel, QScrollArea, QSizePolicy, QStackedWidget,
+    QVBoxLayout, QWidget)
 
 class Ui_MainPages(object):
     def setupUi(self, MainPages):
@@ -131,17 +131,16 @@ class Ui_MainPages(object):
 
         self.hlayout3_process_button = QHBoxLayout()
         self.hlayout3_process_button.setObjectName(u"hlayout3_process_button")
-        self.frame_process = QFrame(self.widget_2)
-        self.frame_process.setObjectName(u"frame_process")
-        self.frame_process.setFrameShape(QFrame.StyledPanel)
-        self.frame_process.setFrameShadow(QFrame.Raised)
+        self.vlayout3_progress = QVBoxLayout()
+        self.vlayout3_progress.setObjectName(u"vlayout3_progress")
 
-        self.hlayout3_process_button.addWidget(self.frame_process)
+        self.hlayout3_process_button.addLayout(self.vlayout3_progress)
 
-        self.vlayout3_button = QVBoxLayout()
-        self.vlayout3_button.setObjectName(u"vlayout3_button")
+        self.glayout3_button = QGridLayout()
+        self.glayout3_button.setSpacing(2)
+        self.glayout3_button.setObjectName(u"glayout3_button")
 
-        self.hlayout3_process_button.addLayout(self.vlayout3_button)
+        self.hlayout3_process_button.addLayout(self.glayout3_button)
 
         self.hlayout3_process_button.setStretch(0, 1)
         self.hlayout3_process_button.setStretch(1, 1)
@@ -170,7 +169,7 @@ class Ui_MainPages(object):
         self.scroll_area.setWidgetResizable(True)
         self.contents = QWidget()
         self.contents.setObjectName(u"contents")
-        self.contents.setGeometry(QRect(0, 0, 840, 580))
+        self.contents.setGeometry(QRect(0, 0, 233, 265))
         self.contents.setStyleSheet(u"background: transparent;")
         self.verticalLayout = QVBoxLayout(self.contents)
         self.verticalLayout.setSpacing(15)
