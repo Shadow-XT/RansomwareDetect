@@ -66,4 +66,5 @@ from .py_table_view import PyTableView
 
 # PY TABLE VIEW PANDAS
 # ///////////////////////////////////////////////////////////////
-from .py_table_view_pandas import PyTableViewPandas
+from .py_table_view_pandas_button import PyTableViewPandasWithButton
+from .py_table_view_pandas_single import PyTableViewPandasSingle

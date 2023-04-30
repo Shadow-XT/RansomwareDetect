@@ -1,80 +1,13 @@
-import pandas as pd
+import os
+
+from PySide6.QtCore import QAbstractTableModel, Qt, QModelIndex
+from PySide6.QtWidgets import QStyledItemDelegate, QPushButton, QHBoxLayout, QLineEdit, QTableView, QWidget, QFileDialog
 from pandas import DataFrame
 
-from qt_core import *
+from util import calculate_entropy, PandasModel
+from util.__call_function__ import __call_msgbox__
+from util.functions import get_file_info
 from .style import *
-
-
-class PandasModel(QAbstractTableModel):
-    def __init__(self, data):
-        super().__init__()
-        data['操作'] = None
-        self._data = data
-
-    def rowCount(self, parent=None):
-        return len(self._data)
-
-    def columnCount(self, parent=None):
-        return len(self._data.columns)
-
-    def headerData(self, section, orientation, role=Qt.DisplayRole):
-        if role == Qt.DisplayRole:
-            if orientation == Qt.Horizontal:
-                if section < self._data.shape[1]:
-                    return str(self._data.columns[section])
-                else:
-                    return None
-            elif orientation == Qt.Vertical:
-                return str(section + 1)
-        return None
-
-    def data(self, index, role=Qt.DisplayRole):
-        if role == Qt.DisplayRole or role == Qt.EditRole:
-            row = index.row()
-            col = index.column()
-            return str(self._data.iloc[row, col])
-
-        return None
-
-    def dataX(self, rowIndex, colIndex, role=Qt.DisplayRole):
-        if role == Qt.DisplayRole or role == Qt.EditRole:
-            row = rowIndex
-            col = colIndex
-            return str(self._data.iloc[row, col])
-        return None
-
-    def setData(self, index, value, role=Qt.EditRole):
-        if role == Qt.EditRole:
-            row = index.row()
-            col = index.column()
-            try:
-                self._data.iloc[row, col] = value
-            except:
-                return False
-            self.dataChanged.emit(index, index)
-            return True
-        return False
-
-    def flags(self, index):
-        return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
-
-    def removeRow(self, row, parent=QModelIndex()):
-        self.beginRemoveRows(parent, row, row)
-        self._data.drop(self._data.index[row], inplace=True)
-        self.endRemoveRows()
-
-    # def appendData(self, data):
-    #     rowCount = self.rowCount()
-    #     newFrame = DataFrame(data, columns=self._data.columns)
-    #     self.beginInsertRows(QModelIndex(), rowCount, rowCount)
-    #     self._data = pd.concat([self._data, newFrame], ignore_index=True)
-    #     self.endInsertRows()
-
-    def appendRow(self, data):
-        rowCount = self.rowCount()
-        self.beginInsertRows(QModelIndex(), rowCount, rowCount)
-        self._data.loc[rowCount] = data
-        self.endInsertRows()
 
 
 class ButtonDelegate(QStyledItemDelegate):
@@ -88,27 +21,40 @@ class ButtonDelegate(QStyledItemDelegate):
             button_update.setStyleSheet(
                 ''' text-align : center;
                     background-color : NavajoWhite;
-                    height : 25px;
+                    height : 30px;
                     width : 60px;
                     border-style: solid;
                     border-radius: 5px;
-                    font : 16px  '''
+                    font : 18px  '''
             )
             button_update.clicked.connect(self.parent().on_btn_update_clicked)
             button_update.index = [index.row(), index.column()]
             button_delete = QPushButton(text="删除")
             button_delete.setStyleSheet(
-                ''' text-align : center;
+                '''QPushButton{ text-align : center;
                     background-color : LightCoral;
-                    height : 25px;
+                    height : 30px;
                     width : 60px;
                     border-style: solid;
                     border-radius: 5px;
-                    font : 16px  '''
+                    font : 18px } '''
             )
             button_delete.clicked.connect(self.parent().on_btn_delete_clicked)
             button_delete.index = [index.row(), index.column()]
+            button_cal = QPushButton(text="计算")
+            button_cal.setStyleSheet(
+                ''' text-align : center;
+                    background-color : Skyblue;
+                    height : 30px;
+                    width : 60px;
+                    border-style: solid;
+                    border-radius: 5px;
+                    font : 18px  '''
+            )
+            button_cal.clicked.connect(self.parent().on_button_cal_clicked)
+            button_cal.index = [index.row(), index.column()]
             h_box_layout = QHBoxLayout()
+            h_box_layout.addWidget(button_cal)
             h_box_layout.addWidget(button_update)
             h_box_layout.addWidget(button_delete)
             h_box_layout.setContentsMargins(0, 0, 0, 0)
@@ -129,7 +75,7 @@ class ButtonDelegate(QStyledItemDelegate):
             self.parent().closePersistentEditor(index)
 
 
-class PyTableViewPandas(QTableView):
+class PyTableViewPandasWithButton(QTableView):
     def __init__(self,
                  radius=8,
                  color="#FFF",
@@ -141,10 +87,11 @@ class PyTableViewPandas(QTableView):
                  grid_line_color="#555",
                  scroll_bar_bg_color="#FFF",
                  scroll_bar_btn_color="#3333",
-                 context_color="#00ABE8"
+                 context_color="#00ABE8",
+                 ui=None
                  ):
-        super(PyTableViewPandas, self).__init__()
-
+        super(PyTableViewPandasWithButton, self).__init__()
+        self._ui = ui
         # self.setAlternatingRowColors(True)
         self._style_sheet = None
         self._model = None
@@ -164,7 +111,7 @@ class PyTableViewPandas(QTableView):
 
     def setModel(self, data: DataFrame):
         self._model = PandasModel(data)
-        super(PyTableViewPandas, self).setModel(self._model)
+        super(PyTableViewPandasWithButton, self).setModel(self._model)
         self.setItemDelegateForColumn(self.model().columnCount() - 1, ButtonDelegate(self))
 
     # @property
@@ -174,10 +121,6 @@ class PyTableViewPandas(QTableView):
     def on_btn_delete_clicked(self):
         btn = self.sender()
         if btn:
-            # print(btn.index[0], btn.index[1],end=' ')
-            # index = self.model().index(btn.index[0], btn.index[1])
-            # self.model().removeRow(btn.index[0])
-
             row = self.indexAt(btn.parent().pos()).row()
             self.model().removeRow(row)
             print(f"delete {row}")
@@ -185,21 +128,30 @@ class PyTableViewPandas(QTableView):
     def on_btn_update_clicked(self):
         btn = self.sender()
         if btn:
-            index = self.indexAt(btn.pos())
-            print(f"update {index}")
-            # index = self.indexAt(btn.pos())
-            # self.model().removeRow(index.row())
-        # btn = self.sender()
-        # index = self.parent().indexAt(btn.pos())
-        # self.parent().model().removeRow(index.row())
-        # btn = self.sender()
-        # index = self.parent().indexAt(btn.pos())
-        # self._editor = QLineEdit(self.parent())
-        # self._editor.setText(self.parent().model().data(index))
-        # self._editor.index = [index.row(), index.column()]
-        # self._editor.editingFinished.connect(self.on_editor_editing_finished)
-        # self.parent().setIndexWidget(index, self._editor)
-        # self._editor.setFocus()
+            index = self.indexAt(btn.parent().pos()).row()
+            # 打开文件选择弹框，文件过滤为可全部
+            file = QFileDialog.getOpenFileName(self, "选择文件", os.path.expanduser("~"), "All Files(*.*)")[0]
+            print(file, index)
+            if file:
+                for i in range(self.model().rowCount()):
+                    if file == self.model().dataX(i, 0):
+                        __call_msgbox__("提示", "不可以选相同的文件", self._ui, self)
+                        return
+                info = get_file_info(file)
+                if info is None:
+                    __call_msgbox__("错误", "读取文件信息失败", self._ui, self)
+                    return
+                self.model().updateRow(index, (file, info[0] if info[0] else "未知", info[1]))
+            else:
+                __call_msgbox__("提示", "未选择文件", self._ui, self)
+
+    def on_button_cal_clicked(self):
+        btn = self.sender()
+        if btn:
+            row = self.indexAt(btn.parent().pos()).row()
+            __call_msgbox__("计算结果", f"计算的信息熵值为: {os.linesep}"
+                                        f"{calculate_entropy(self.model().dataX(row, 0), 0.8)}",
+                            self._ui, self)
 
     def set_stylesheet(
             self,

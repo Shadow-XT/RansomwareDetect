@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'main_pagesPdPfKk.ui'
+## Form generated from reading UI file 'main_pagesYqVPtP.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.4.2
 ##
@@ -16,8 +16,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QFrame, QGridLayout, QHBoxLayout,
-    QLabel, QScrollArea, QSizePolicy, QStackedWidget,
-    QVBoxLayout, QWidget)
+    QLabel, QScrollArea, QSizePolicy, QSpacerItem,
+    QStackedWidget, QVBoxLayout, QWidget)
 
 class Ui_MainPages(object):
     def setupUi(self, MainPages):
@@ -129,12 +129,20 @@ class Ui_MainPages(object):
 
         self.verticalLayout_4.addLayout(self.hlayout3_table)
 
+        self.verticalSpacer = QSpacerItem(10, 10, QSizePolicy.Minimum, QSizePolicy.Fixed)
+
+        self.verticalLayout_4.addItem(self.verticalSpacer)
+
         self.hlayout3_process_button = QHBoxLayout()
         self.hlayout3_process_button.setObjectName(u"hlayout3_process_button")
-        self.vlayout3_progress = QVBoxLayout()
-        self.vlayout3_progress.setObjectName(u"vlayout3_progress")
+        self.hlayout3_progress = QHBoxLayout()
+        self.hlayout3_progress.setObjectName(u"hlayout3_progress")
 
-        self.hlayout3_process_button.addLayout(self.vlayout3_progress)
+        self.hlayout3_process_button.addLayout(self.hlayout3_progress)
+
+        self.horizontalSpacer = QSpacerItem(20, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.hlayout3_process_button.addItem(self.horizontalSpacer)
 
         self.glayout3_button = QGridLayout()
         self.glayout3_button.setSpacing(2)
@@ -142,8 +150,8 @@ class Ui_MainPages(object):
 
         self.hlayout3_process_button.addLayout(self.glayout3_button)
 
-        self.hlayout3_process_button.setStretch(0, 1)
-        self.hlayout3_process_button.setStretch(1, 1)
+        self.hlayout3_process_button.setStretch(0, 3)
+        self.hlayout3_process_button.setStretch(2, 2)
 
         self.verticalLayout_4.addLayout(self.hlayout3_process_button)
 

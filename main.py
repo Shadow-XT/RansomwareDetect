@@ -51,14 +51,21 @@ class MainWindow(QMainWindow):
         self.ui.btn_load_file.clicked.connect(lambda: btn_load_file_slot(self))
         self.ui.btn_clear_file.clicked.connect(lambda: btn_clear_file_slot(self))
         # 设置执行检测页面
-        self.ui.btn_start.clicked.connect(lambda: btn_monitor_start(self))
-        self.ui.btn_stop.clicked.connect(lambda: btn_monitor_stop(self))
-        self.ui.btn_pause.clicked.connect(lambda: btn_monitor_pause(self))
-        self.ui.btn_restart.clicked.connect(lambda: btn_monitor_restart(self))
+        self.ui.btn_monitor_start.clicked.connect(lambda: btn_monitor_start_slot(self))
+        self.ui.btn_monitor_stop.clicked.connect(lambda: btn_monitor_stop_slot(self))
+        # self.ui.btn_pause.clicked.connect(lambda: btn_monitor_pause(self))
+        self.ui.btn_monitor_restart.clicked.connect(lambda: btn_monitor_restart_slot(self))
+        self.ui.btn_monitor_load.clicked.connect(lambda: btn_monitor_load_slot(self))
 
         self.cpu_thread = CPUThread()
-        self.cpu_thread.cpu_value_signal.connect(lambda value: self.ui.cpu_usage.set_value(value))
+        self.cpu_thread.cpu_value_signal.connect(self.set_usage_value)
         self.cpu_thread.start()
+
+        self.monitor_thread = None
+
+    def set_usage_value(self, value):
+        self.ui.cpu_usage.set_value(value[0])
+        self.ui.memory_usage.set_value(value[1][2])
 
     # 左边菜单栏被单击时运行
     # 按对象名称/按钮id检查功能
@@ -237,21 +244,23 @@ class MainWindow(QMainWindow):
     def closeEvent(self, event):
         # 询问是否退出，添加自定义按钮
         msg = PyMessageBoxConfirm(self, "退出程序", "你确定要退出程序吗？",
-                           color=self.themes["app_color"]["dark_four"],
-                           selection_color=self.themes["app_color"]["white"],
-                           bg_color=self.themes["app_color"]["dark_four"],
-                           text_color=self.themes["app_color"]["text_foreground"],
-                           btn_color=self.themes["app_color"]["text_foreground"],
-                           btn_bg_color=self.themes["app_color"]["dark_one"],
-                           btn_bg_color_hover=self.themes["app_color"]["dark_three"],
-                           btn_bg_color_pressed=self.themes["app_color"]["dark_four"],
-                           buttons={QMessageBox.ButtonRole.YesRole: "确定",
-                                    QMessageBox.ButtonRole.NoRole: "取消"})
+                                  color=self.themes["app_color"]["dark_four"],
+                                  selection_color=self.themes["app_color"]["white"],
+                                  bg_color=self.themes["app_color"]["dark_four"],
+                                  text_color=self.themes["app_color"]["text_foreground"],
+                                  btn_color=self.themes["app_color"]["text_foreground"],
+                                  btn_bg_color=self.themes["app_color"]["dark_one"],
+                                  btn_bg_color_hover=self.themes["app_color"]["dark_three"],
+                                  btn_bg_color_pressed=self.themes["app_color"]["dark_four"],
+                                  buttons={QMessageBox.ButtonRole.YesRole: "确定",
+                                           QMessageBox.ButtonRole.NoRole: "取消"})
         msg.setFont(QFont("微软雅黑", 18))
         msg.exec()
         if msg.clickedButton() == msg.btn_dict["确定"]:
-            if self.cpu_thread.isRunning():
+            if self.cpu_thread and self.cpu_thread.isRunning():
                 self.cpu_thread.stop()
+            if self.monitor_thread and self.monitor_thread.isRunning():
+                self.monitor_thread.stop()
             event.accept()
         elif msg.clickedButton() == msg.btn_dict["取消"]:
             event.ignore()

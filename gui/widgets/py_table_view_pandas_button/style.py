@@ -45,6 +45,7 @@ QTableView QTableCornerButton::section {{
 QHeaderView::section:horizontal
 {{
     font-size: 19px;
+    font-weight: bold;
     border: none;
 	background-color: {_header_horizontal_color};
 	padding: 3px;

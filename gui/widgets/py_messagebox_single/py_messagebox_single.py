@@ -14,7 +14,8 @@ class PyMessageBoxSingle(QMessageBox):
                  btn_bg_color=None,
                  btn_bg_color_hover=None,
                  btn_bg_color_pressed=None,
-                 width=(500, 250)):
+                 width=(500, 250),
+                 font=("Microsoft YaHei", 18)):
         super().__init__(icon)
         self.setMinimumWidth(width[0])
 
@@ -27,7 +28,7 @@ class PyMessageBoxSingle(QMessageBox):
         self.setText(text)
         self.addButton("确定", QMessageBox.YesRole)
         self.set_stylesheet(selection_color, bg_color, text_color, btn_color,
-                            btn_bg_color, btn_bg_color_hover, btn_bg_color_pressed)
+                            btn_bg_color, btn_bg_color_hover, btn_bg_color_pressed, font)
 
     def set_stylesheet(self,
                        selection_color,
@@ -36,7 +37,7 @@ class PyMessageBoxSingle(QMessageBox):
                        btn_color,
                        btn_bg_color,
                        btn_bg_color_hover,
-                       btn_bg_color_pressed):
+                       btn_bg_color_pressed, font):
         style = f"""
 QMessageBox {{
     background-color: {bg_color};
@@ -44,6 +45,8 @@ QMessageBox {{
 }}
 QMessageBox QLabel {{
     color: {text_color};
+    font-size: {font[1]}px;
+    font-family: {font[0]};
 }}
 QMessageBox QPushButton {{
     border-radius: 5px;

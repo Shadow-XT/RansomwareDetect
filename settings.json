@@ -1,39 +1,39 @@
 {
-    "app_name": "PyOneDark - Modern GUI",
-    "version" : "v1.0.0",
-    "copyright" : "By: Wanderson M. Pimenta",
-    "year" : 2021,
-    "theme_name" : "default",
-    "custom_title_bar": true,
-    "default_size": [
-        1400,
-        720
-    ],
-    "startup_size": [
-        1200,
-        700
-    ],
-    "minimum_size": [
-        960,
-        540
-    ],
-    "lef_menu_size" : {
-        "minimum" : 50,
-        "maximum" : 240
-    },
-    "left_menu_content_margins" : 3,
-    "left_column_size" : {
-        "minimum" : 0,
-        "maximum" : 240
-    },
-    "right_column_size" : {
-        "minimum" : 0,
-        "maximum" : 240
-    },
-    "time_animation" : 500,
-    "font" : {
-        "family" : "Segoe UI",
-        "title_size" : 15,
-        "text_size" : 15
-    }
+  "app_name": "勒索软件检测程序",
+  "version": "v1.0.0",
+  "copyright": "By 张江洪",
+  "year": 2023,
+  "theme_name": "dracula",
+  "custom_title_bar": true,
+  "default_size": [
+    1400,
+    720
+  ],
+  "startup_size": [
+    1360,
+    700
+  ],
+  "minimum_size": [
+    1250,
+    540
+  ],
+  "lef_menu_size": {
+    "minimum": 50,
+    "maximum": 240
+  },
+  "left_menu_content_margins": 3,
+  "left_column_size": {
+    "minimum": 0,
+    "maximum": 240
+  },
+  "right_column_size": {
+    "minimum": 0,
+    "maximum": 240
+  },
+  "time_animation": 500,
+  "font": {
+    "family": "Segoe UI",
+    "title_size": 15,
+    "text_size": 15
+  }
 }

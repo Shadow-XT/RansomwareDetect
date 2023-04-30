@@ -1,13 +1,15 @@
 import json
 import os
-import winreg
 
 from PySide6.QtCore import Slot
 from PySide6.QtGui import QFont
 from PySide6.QtWidgets import QMainWindow, QFileDialog, QMessageBox
-from magic import magic
+# from magic import magic
 
-from gui.widgets import PyMessageBoxSingle, PyMessageBoxConfirm
+from util.__call_function__ import __call_msgbox__
+from gui.widgets import PyMessageBoxConfirm
+from util.functions import get_file_info
+from util.get_file_type import get_file_type
 
 
 @Slot(QMainWindow)
@@ -25,9 +27,10 @@ def btn_load_profile_slot(win: QMainWindow):
                     if not os.path.exists(file):
                         drop_file.append(file)
                         continue
-                    file_type = magic.from_file(file, mime=True)
+                    file_type = get_file_type(file)
                     file_size = os.path.getsize(file)
-                    win.ui.file_table.model().appendRow([file, file_type if file_type else "未知", file_size, None])
+                    win.ui.file_table.model().appendRow(
+                        [file, file_type.split(",")[0] if file_type else "未知", file_size, None])
                 if len(drop_file) > 0:
                     __call_msgbox__("错误", f"以下文件不存在，已经被移除:{os.linesep}{os.linesep.join(drop_file)}", win,
                                     12)
@@ -90,28 +93,17 @@ def btn_load_file_slot(win: QMainWindow):
     table = win.ui.file_table
     # 添加文件到TableView
     if table:
-        # 获取文件的大小
-        file_size = os.path.getsize(select_file)
         # 判断设置的文件是不是已经存在与列表中
         for i in range(table.model().rowCount()):
             if table.model().dataX(i, 0) == select_file:
                 __call_msgbox__("提示", "文件已存在", win)
                 return
-        # 获取文件的类型
-        file_mime = magic.from_file(select_file, mime=True)
-        # if file_mime:
-        #     try:
-        #         # key_name = f'Software\\Classes\\{file_mime}'
-        #         key = winreg.OpenKey(winreg.HKEY_CLASSES_ROOT, file_mime)
-        #         # winreg.SetValue(key, 'FriendlyTypeName', winreg.REG_SZ, '文本文档')
-        #         value, _ = winreg.QueryValueEx(key, 'FriendlyTypeName')
-        #         file_type = value
-        #     except Exception as e:
-        #         file_type = "未知文件类型"
-        #         print("异常了 ", e, file_mime)
-        # else:
-        #     file_type = "未知文件类型"
-        file_type = magic.from_file(select_file, mime=False)
+        # 获取文件的类型和大小
+        info = get_file_info(select_file)
+        if info is None:
+            __call_msgbox__("错误", "获取文件信息失败", win)
+            return
+        file_type, file_size = info
         table.model().appendRow([select_file, file_type.split(",")[0] if file_type else "未知", file_size, None])
         # table.model().appendRow([select_file, file_size, file_type, None])
 
@@ -120,20 +112,6 @@ def btn_load_file_slot(win: QMainWindow):
 def btn_clear_file_slot(win: QMainWindow):
     # 清除TableView的内容
     if win.ui.file_table:
-        for i in range(win.ui.file_table.model().rowCount() - 1, -1, -1):
-            win.ui.file_table.model().removeRow(i)
-
-
-def __call_msgbox__(title, text, win: QMainWindow, font_size=14):
-    msg = PyMessageBoxSingle(win, title, text,
-                             color=win.themes["app_color"]["dark_four"],
-                             selection_color=win.themes["app_color"]["white"],
-                             bg_color=win.themes["app_color"]["dark_four"],
-                             text_color=win.themes["app_color"]["text_foreground"],
-                             btn_color=win.themes["app_color"]["text_foreground"],
-                             btn_bg_color=win.themes["app_color"]["dark_one"],
-                             btn_bg_color_hover=win.themes["app_color"]["dark_three"],
-                             btn_bg_color_pressed=win.themes["app_color"]["dark_four"]
-                             )
-    msg.setFont(QFont("微软雅黑", font_size))
-    msg.exec()
+        win.ui.file_table.model().clearRows()
+        # for i in range(win.ui.file_table.model().rowCount() - 1, -1, -1):
+        #     win.ui.file_table.model().removeRow(i)

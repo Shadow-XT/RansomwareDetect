@@ -270,7 +270,7 @@ class SetupMainWindow:
         self.ui.load_pages.logo_layout.addWidget(self.logo_svg, Qt.AlignCenter, Qt.AlignCenter)
 
         # 页面2（配置诱饵文件）
-        self.ui.file_table = PyTableViewPandas(
+        self.ui.file_table = PyTableViewPandasWithButton(
             color=self.themes["app_color"]["text_foreground"],
             selection_color=self.themes["app_color"]["context_color"],
             bg_color=self.themes["app_color"]["bg_two"],
@@ -280,30 +280,24 @@ class SetupMainWindow:
             grid_line_color=self.themes["app_color"]["bg_one"],
             scroll_bar_bg_color=self.themes["app_color"]["bg_one"],
             scroll_bar_btn_color=self.themes["app_color"]["dark_four"],
-            context_color=self.themes["app_color"]["context_color"]
+            context_color=self.themes["app_color"]["context_color"],
+            ui=self.ui
         )
         import pandas as pd
-        data = pd.DataFrame([
-            ['John', 30, 'New York'],
-            ['Jane', 25, 'Paris'],
-            ['Bob', 40, 'London'],
-            ['Alice', 35, 'Tokyo'],
-            ['Tom', 50, 'Beijing'],
-            ['Jack', 45, 'Shanghai'],
-            ['Lily', 20, 'Shenzhen'],
+        init_data = pd.DataFrame([
         ], columns=['文件', '类型', '大小'])
         # self.model.setItemData()
         # self.file_table.setModel(data)
         # self.ui.file_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.ui.load_pages.hlayout2_table.addWidget(self.ui.file_table)
-        self.ui.file_table.setModel(data)
+        self.ui.file_table.setModel(init_data)
         self.ui.file_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.Fixed)
         self.ui.file_table.setColumnWidth(0, 500)
         # 将其它列设置为指定宽度
         self.ui.file_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.Fixed)
-        self.ui.file_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.Stretch)
-        self.ui.file_table.setColumnWidth(1, 200)
-        self.ui.file_table.setColumnWidth(2, 50)
+        self.ui.file_table.setColumnWidth(1, 230)
+        self.ui.file_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.Fixed)
+        self.ui.file_table.setColumnWidth(2, 120)
         self.ui.file_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.Stretch)
         self.ui.file_table.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
@@ -314,6 +308,7 @@ class SetupMainWindow:
         # self.setCentralWidget(self.file_table)
 
         self.ui.btn_load_profile = PyPushButton(
+            heigh="50px",
             text="加载配置",
             radius=8,
             color=self.themes["app_color"]["text_foreground"],
@@ -322,6 +317,7 @@ class SetupMainWindow:
             bg_color_pressed=self.themes["app_color"]["dark_four"]
         )
         self.ui.btn_save_profile = PyPushButton(
+            heigh="50px",
             text="保存配置",
             radius=8,
             color=self.themes["app_color"]["text_foreground"],
@@ -330,6 +326,7 @@ class SetupMainWindow:
             bg_color_pressed=self.themes["app_color"]["dark_four"]
         )
         self.ui.btn_load_file = PyPushButton(
+            heigh="50px",
             text="添加文件",
             radius=8,
             color=self.themes["app_color"]["text_foreground"],
@@ -338,6 +335,7 @@ class SetupMainWindow:
             bg_color_pressed=self.themes["app_color"]["dark_four"]
         )
         self.ui.btn_clear_file = PyPushButton(
+            heigh="50px",
             text="清空文件",
             radius=8,
             color=self.themes["app_color"]["text_foreground"],
@@ -353,7 +351,7 @@ class SetupMainWindow:
 
         # 页面3（运行检测）
         # 添加运行表格
-        self.ui.run_table = PyTableView(
+        self.ui.monitor_table = PyTableViewPandasSingle(
             color=self.themes["app_color"]["text_foreground"],
             selection_color=self.themes["app_color"]["context_color"],
             bg_color=self.themes["app_color"]["bg_two"],
@@ -365,25 +363,73 @@ class SetupMainWindow:
             scroll_bar_btn_color=self.themes["app_color"]["dark_four"],
             context_color=self.themes["app_color"]["context_color"]
         )
-        self.ui.run_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.ui.load_pages.hlayout3_table.addWidget(self.ui.run_table)
-        # self.ui.run_table = PyTable
+        # TODO: 需要完善
+        data_monitor = pd.DataFrame(
+            [],
+            columns=["文件夹", "原文件名", "新文件名", "大小", "修改时间", "信息熵"]
+        )
+        # self.ui.run_table_model = MonitorTableModel(self.ui.run_table_data, self.ui.run_table_headers)
+        self.ui.monitor_table.setModelX(data_monitor, floatRule=(5, 6))
+
+        self.ui.monitor_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.Fixed)
+        self.ui.monitor_table.setColumnWidth(0, 280)
+        # 将其它列设置为指定宽度
+        self.ui.monitor_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.Fixed)
+        self.ui.monitor_table.setColumnWidth(1, 220)
+        self.ui.monitor_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.Fixed)
+        self.ui.monitor_table.setColumnWidth(2, 280)
+        self.ui.monitor_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.Fixed)
+        self.ui.monitor_table.setColumnWidth(3, 100)
+        self.ui.monitor_table.horizontalHeader().setSectionResizeMode(4, QHeaderView.Fixed)
+        self.ui.monitor_table.setColumnWidth(4, 180)
+        self.ui.monitor_table.horizontalHeader().setSectionResizeMode(5, QHeaderView.Stretch)
+        # self.ui.monitor_table.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.ui.load_pages.hlayout3_table.addWidget(self.ui.monitor_table)
+        self.ui.monitor_table.verticalHeader().setStyleSheet(f'background-color: {colorx};')
+
+        self.ui.monitor_table.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.ui.monitor_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+
         # 添加CPU使用率
         self.ui.cpu_usage = PyCircularProgress(
+            title="处理器占用率",
             value=80,
             progress_color=self.themes["app_color"]["context_color"],
             text_color=self.themes["app_color"]["text_title"],
             font_size=14,
             bg_color=self.themes["app_color"]["dark_four"]
         )
-        self.ui.load_pages.vlayout3_progress.addWidget(self.ui.cpu_usage)
-        self.ui.cpu_usage.setFixedSize(150, 150)
-        self.ui.label_progress = QLabel("CPU使用率")
-        self.ui.label_progress.setStyleSheet("font-size: 20px;")
-        self.ui.load_pages.vlayout3_progress.addWidget(self.ui.label_progress)
+        self.ui.load_pages.hlayout3_progress.addWidget(self.ui.cpu_usage)
+        self.ui.cpu_usage.setFixedSize(160, 160)
+        self.ui.usage_spacer = QSpacerItem(20, 20, QSizePolicy.Maximum, QSizePolicy.Minimum)
+        self.ui.load_pages.hlayout3_progress.addItem(self.ui.usage_spacer)
+        self.ui.memory_usage = PyCircularProgress(
+            title="内存占用率",
+            value=80,
+            progress_color=self.themes["app_color"]["context_color"],
+            text_color=self.themes["app_color"]["text_title"],
+            font_size=14,
+            bg_color=self.themes["app_color"]["dark_four"]
+        )
+        self.ui.load_pages.hlayout3_progress.addWidget(self.ui.memory_usage)
+        self.ui.memory_usage.setFixedSize(160, 160)
+
+        # self.ui.label_progress = QLabel("CPU使用率")
+        # self.ui.label_progress.setStyleSheet("font-size: 20px;")
+        # self.ui.load_pages.vlayout3_progress.addWidget(self.ui.label_progress)
 
         # 添加按钮
-        self.ui.btn_start = PyPushButton(
+        self.ui.btn_monitor_load = PyPushButton(
+            heigh="40px",
+            text="加载文件",
+            radius=8,
+            color=self.themes["app_color"]["text_foreground"],
+            bg_color=self.themes["app_color"]["dark_one"],
+            bg_color_hover=self.themes["app_color"]["dark_three"],
+            bg_color_pressed=self.themes["app_color"]["dark_four"]
+        )
+        self.ui.btn_monitor_start = PyPushButton(
+            heigh="40px",
             text="开始检测",
             radius=8,
             color=self.themes["app_color"]["text_foreground"],
@@ -391,23 +437,27 @@ class SetupMainWindow:
             bg_color_hover=self.themes["app_color"]["dark_three"],
             bg_color_pressed=self.themes["app_color"]["dark_four"]
         )
-        self.ui.btn_pause = PyPushButton(
-            text="暂停检测",
-            radius=8,
-            color=self.themes["app_color"]["text_foreground"],
-            bg_color=self.themes["app_color"]["dark_one"],
-            bg_color_hover=self.themes["app_color"]["dark_three"],
-            bg_color_pressed=self.themes["app_color"]["dark_four"]
-        )
-        self.ui.btn_stop = PyPushButton(
+        # self.ui.btn_pause = PyPushButton(
+        #     heigh="40px",
+        #     text="暂停检测",
+        #     radius=8,
+        #     color=self.themes["app_color"]["text_foreground"],
+        #     bg_color=self.themes["app_color"]["dark_one"],
+        #     bg_color_hover=self.themes["app_color"]["dark_three"],
+        #     bg_color_pressed=self.themes["app_color"]["dark_four"]
+        # )
+        self.ui.btn_monitor_stop = PyPushButton(
+            heigh="40px",
             text="结束检测",
             radius=8,
             color=self.themes["app_color"]["text_foreground"],
             bg_color=self.themes["app_color"]["dark_one"],
             bg_color_hover=self.themes["app_color"]["dark_three"],
-            bg_color_pressed=self.themes["app_color"]["dark_four"]
+            bg_color_pressed=self.themes["app_color"]["dark_four"],
+
         )
-        self.ui.btn_restart = PyPushButton(
+        self.ui.btn_monitor_restart = PyPushButton(
+            heigh="40px",
             text="重新检测",
             radius=8,
             color=self.themes["app_color"]["text_foreground"],
@@ -415,10 +465,14 @@ class SetupMainWindow:
             bg_color_hover=self.themes["app_color"]["dark_three"],
             bg_color_pressed=self.themes["app_color"]["dark_four"]
         )
-        self.ui.load_pages.glayout3_button.addWidget(self.ui.btn_start, 0, 0)
-        self.ui.load_pages.glayout3_button.addWidget(self.ui.btn_pause, 0, 1)
-        self.ui.load_pages.glayout3_button.addWidget(self.ui.btn_stop, 1, 0)
-        self.ui.load_pages.glayout3_button.addWidget(self.ui.btn_restart, 1, 1)
+        self.ui.load_pages.glayout3_button.addWidget(self.ui.btn_monitor_load, 0, 0)
+        self.ui.load_pages.glayout3_button.addWidget(self.ui.btn_monitor_start, 0, 1)
+        # self.ui.load_pages.glayout3_button.addWidget(self.ui.btn_pause, 1, 1)
+        self.ui.load_pages.glayout3_button.addWidget(self.ui.btn_monitor_stop, 1, 0)
+        self.ui.load_pages.glayout3_button.addWidget(self.ui.btn_monitor_restart, 1, 1)
+        # self.ui.btn_pause.setEnabled(False)
+        self.ui.btn_monitor_stop.setEnabled(False)
+        self.ui.btn_monitor_restart.setEnabled(False)
         self.ui.load_pages.label_run.setStyleSheet("font-size: 25px")
         # PAGE 2
         # CIRCULAR PROGRESS 1
