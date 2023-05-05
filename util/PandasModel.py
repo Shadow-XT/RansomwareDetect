@@ -2,10 +2,12 @@ from PySide6.QtCore import QAbstractTableModel, Qt, QModelIndex
 
 
 class PandasModel(QAbstractTableModel):
-    def __init__(self, data, haveOperation=True, floatRule=None):
+    def __init__(self, data, haveOperation=True, floatRule=None, vertical=None):
         super().__init__()
         if haveOperation:
             data['操作'] = None
+        if vertical is not None:
+            self._vertical = vertical
         self.floatRule = floatRule
         self._data = data
 
@@ -23,6 +25,8 @@ class PandasModel(QAbstractTableModel):
                 else:
                     return None
             elif orientation == Qt.Vertical:
+                if self._vertical is not None:
+                    return str(self._vertical[section])
                 return str(section + 1)
         return None
 

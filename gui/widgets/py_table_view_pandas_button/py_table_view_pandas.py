@@ -6,7 +6,7 @@ from pandas import DataFrame
 
 from util import calculate_entropy, PandasModel
 from util.__call_function__ import __call_msgbox__
-from util.functions import get_file_info
+from util.file_function import get_file_info
 from .style import *
 
 

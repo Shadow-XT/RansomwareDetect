@@ -1,13 +1,12 @@
 import os
 import time
 from pprint import pprint
+import httpx
 
 from PySide6.QtCore import Slot
 from PySide6.QtWidgets import QMainWindow
 
-from util.__call_function__ import __call_msgbox__
-from util import MonitorThread, get_fileid_by_filename
-from util import calculate_entropy
+from util import MonitorThread, calculate_file_head_hash, calculate_entropy, __call_msgbox__
 
 
 @Slot(QMainWindow)
@@ -45,6 +44,7 @@ def btn_monitor_start_slot(win: QMainWindow):
     id_to_file = {}
     files = []
     dirs = set()
+    win.prev_info = {}
     for index in range(win.ui.monitor_table.model().rowCount()):
         file_dir = win.ui.monitor_table.model().dataX(index, 0)
         file_abs = os.path.join(file_dir, win.ui.monitor_table.model().dataX(index, 1)).replace('\\', '/')
@@ -55,38 +55,47 @@ def btn_monitor_start_slot(win: QMainWindow):
         id_to_file[file_dir][file_id] = (file_abs, index)
         files.append(file_abs)
         dirs.add(file_dir)
-    pprint(files)
-    pprint(dirs)
-    pprint(id_to_file)
+        win.prev_info[index] = {"currname": file_abs,
+                                "file_entropy": calculate_entropy(file_abs, 0.8),
+                                "file_head_hash": calculate_file_head_hash(file_abs),
+                                "file_size": os.path.getsize(file_abs),
+                                "file_mtime": os.path.getmtime(file_abs)}
 
+    win.infected = 0
     win.monitor_thread = MonitorThread(dirs, files, id_to_file)
-    win.monitor_thread.call_back.connect(monitor_accept)
+    win.monitor_thread.call_back.connect(lambda info: monitor_accept(win, info))
     win.monitor_thread.start()
     __call_msgbox__("提示", "监控已启动", win)
     win.ui.btn_monitor_stop.setEnabled(True)
     win.ui.btn_monitor_restart.setEnabled(True)
     win.ui.btn_monitor_start.setEnabled(False)
 
-    # win.monitor_thread = MonitorThread(file_to_id)
-    # win.monitor_thread.call_back.connect(monitor_accept)
-    # win.monitor_thread.start()
-    # __call_msgbox__("提示", "监控已启动", win)
-    # win.ui.btn_monitor_stop.setEnabled(True)
-    # win.ui.btn_monitor_restart.setEnabled(True)
-    # win.ui.btn_monitor_start.setEnabled(False)
-    # TODO!: 需要完善监控线程
-
-    # win.ui.monitor_thread = MonitorThread()
-
 
 @Slot(dict)
-def monitor_accept(info: dict):
-    pass
-    # print(f"monitor_accept {os.pathsep}{info['id']}{os.pathsep}{info['file']}"
-    #       f"{info['dst_path']}")
-    # print(f"monitor accept {info['src'][0]}({info['src'][1]}) -> {info['cur']}")
-    # win.ui.monitor_thread.call_back.connect(monitor_accept)
-    # win.ui.monitor_thread.start()
+def monitor_accept(win, info: dict):
+    # pprint(f"monitor accept {info['src'][0]}({info['src'][1]}) -> {info['cur']}")
+
+    index = win.ui.monitor_table.model().index(info['src'][1], 2)
+    win.ui.monitor_table.model().setData(index, info['cur'])
+
+    file_entropy = calculate_entropy(info['cur'], 0.8)
+    file_head_hash = calculate_file_head_hash(info['cur'])
+
+    res = httpx.post(data={
+        "src": info['src'][0],
+        "curr": info['cur'],
+        "pmtime": win.prev[info['src'][1]]["file_mtime"],
+        "mtime": time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(os.path.getmtime(info['cur']))),
+        "pentropy": win.prev_info[info['src'][1]]["file_entropy"],
+        "entropy": file_entropy,
+        "pheadHash": win.prev_info[info['src'][1]]["file_head_hash"],
+        "headHash": file_head_hash
+    })
+    # file_size = os.path.getsize(info['cur'])7
+    # file_mtime = os.path.getmtime(info['cur'])
+    if file_head_hash != win.prev_info[info['src'][1]]["file_head_hash"] and \
+            file_entropy > win.prev_info[info['src'][1]]["file_entropy"]:
+        win.infected += 1
 
 
 @Slot(QMainWindow)
@@ -102,11 +111,9 @@ def btn_monitor_stop_slot(win: QMainWindow):
     else:
         __call_msgbox__("提示", "监控检测未启动", win)
 
-
 # @Slot(QMainWindow)
 # def btn_monitor_pause(win: QMainWindow):
 #     print(f"btn_monitor_pause {win.objectName()}")
-
 
 @Slot(QMainWindow)
 def btn_monitor_restart_slot(win: QMainWindow):

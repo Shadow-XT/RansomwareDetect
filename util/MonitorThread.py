@@ -53,11 +53,12 @@ class BaitFileSystemEventHandler(FileSystemEventHandler):
                 size -= 1
             else:
                 return
-            pprint(f"{size} modify {self._id_to_file[dirx][size]} -> {src_path}")
+            # pprint(f"{size} modify {self._id_to_file[dirx][size]} -> {src_path}")
             self._infected.append(src_path)
-            self._call_back.emit({"src": self._id_to_file[dirx][size], "cur": src_path})
+            self._call_back.emit({"src": self._id_to_file[dirx][size], "cur": os.path.basename(src_path)})
         except FileNotFoundError:
-            pprint(f"file not found {src_path}")
+            pass
+            # pprint(f"file not found {src_path}")
 
 
 class MonitorThread(QThread):

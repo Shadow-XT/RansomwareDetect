@@ -1,5 +1,7 @@
 import os
+import re
 import sys
+
 # 导入设置
 from gui.core.json_settings import Settings
 # 导入=主窗体
@@ -14,6 +16,7 @@ from util.CPUThread import CPUThread
 # 导入slot
 from app.slots.init_page_slots import *
 from app.slots.monitor_page_slots import *
+from app.slots.database_page_slots import *
 
 # 导入配置
 # from app.app_init_button import *
@@ -50,6 +53,18 @@ class MainWindow(QMainWindow):
         self.ui.btn_save_profile.clicked.connect(lambda: btn_save_profile_slot(self))
         self.ui.btn_load_file.clicked.connect(lambda: btn_load_file_slot(self))
         self.ui.btn_clear_file.clicked.connect(lambda: btn_clear_file_slot(self))
+
+        # 数据库页面
+        self.ui.btn_load_url.clicked.connect(lambda: btn_load_url_slot(self))
+        self.ui.btn_db_connect.clicked.connect(lambda: btn_db_connect_slot(self))
+        self.ui.btn_load_log.clicked.connect(lambda: btn_load_log_slot(self))
+        self.ui.btn_save_url.clicked.connect(lambda: btn_save_url_slot(self))
+        self.ui.pagination.first_button.clicked.connect(lambda: btn_go_to_first(self))
+        self.ui.pagination.previous_button.clicked.connect(lambda: btn_go_to_previous(self))
+        self.ui.pagination.next_button.clicked.connect(lambda: btn_go_to_next(self))
+        self.ui.pagination.last_button.clicked.connect(lambda: btn_go_to_last(self))
+        self.ui.pagination.jump_button.clicked.connect(lambda: btn_go_to_jump(self))
+
         # 设置执行检测页面
         self.ui.btn_monitor_start.clicked.connect(lambda: btn_monitor_start_slot(self))
         self.ui.btn_monitor_stop.clicked.connect(lambda: btn_monitor_stop_slot(self))
@@ -62,6 +77,8 @@ class MainWindow(QMainWindow):
         self.cpu_thread.start()
 
         self.monitor_thread = None
+        self.isConnected = False
+        self.isLoaded = False
 
     def set_usage_value(self, value):
         self.ui.cpu_usage.set_value(value[0])
@@ -95,17 +112,17 @@ class MainWindow(QMainWindow):
             # 加载初始化页面
             MainFunctions.set_page(self, self.ui.load_pages.page_2_init_file)
 
-        # 执行检测按钮
-        if btn.objectName() == "btn_run":
-            self.ui.left_menu.select_only_one(btn.objectName())
-            # 加载执行检测页面
-            MainFunctions.set_page(self, self.ui.load_pages.page_3_monitor)
-
         # TODO: 需要完成数据库页面的功能
         if btn.objectName() == "btn_database":
             self.ui.left_menu.select_only_one(btn.objectName())
             # 加载数据库界面
-            MainFunctions.set_page(self, self.ui.load_pages.page_4_database)
+            MainFunctions.set_page(self, self.ui.load_pages.page_3_database)
+
+        # 执行检测按钮
+        if btn.objectName() == "btn_run":
+            self.ui.left_menu.select_only_one(btn.objectName())
+            # 加载执行检测页面
+            MainFunctions.set_page(self, self.ui.load_pages.page_4_monitor)
 
         # 部件页面按钮
         if btn.objectName() == "btn_widgets":
@@ -222,23 +239,6 @@ class MainWindow(QMainWindow):
         if event.button() == Qt.LeftButton:
             self.mousePressed = False
             self.dragPos = QPoint(0, 0)
-
-    # 鼠标点击事件
-    # def mousePressEvent(self, event):
-    #     # SET DRAG POS WINDOW
-    #     # self.dragPos = event.globalPos()
-    #     self.dragPos = event.globalPosition().toPoint()
-
-    # # 鼠标移动事件
-    # def mouseMoveEvent(self, event):
-    #     if event.buttons() == Qt.LeftButton:
-    #         # MOVE WINDOW
-    #         # self.move(self.pos() + event.globalPos() - self.dragPos)
-    #         pos = event.globalPosition().toPoint()
-    #         if self.geometry().contains(pos):
-    #             self.move(self.pos() + pos - self.dragPos)
-    #             self.dragPos = event.globalPosition().toPoint()
-    #             event.accept()
 
     # 设置关闭事件
     def closeEvent(self, event):

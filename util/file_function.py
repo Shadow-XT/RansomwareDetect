@@ -1,8 +1,7 @@
 import collections
+import hashlib
 import math
 import os
-
-import magic
 
 from util.get_file_type import get_file_type
 
@@ -49,3 +48,12 @@ def get_file_info(filename):
         return file_type, file_size
     except:
         return None
+
+
+def calculate_file_head_hash(filename):
+    with open(filename, 'rb') as f:
+        data = f.read(8)
+        # 计算data的MD5值
+        md5 = hashlib.md5()
+        md5.update(data)
+        return md5.hexdigest()

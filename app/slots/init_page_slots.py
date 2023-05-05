@@ -8,7 +8,7 @@ from PySide6.QtWidgets import QMainWindow, QFileDialog, QMessageBox
 
 from util.__call_function__ import __call_msgbox__
 from gui.widgets import PyMessageBoxConfirm
-from util.functions import get_file_info
+from util.file_function import get_file_info
 from util.get_file_type import get_file_type
 
 
@@ -64,14 +64,19 @@ def btn_save_profile_slot(win: QMainWindow):
                               )
     msg.setFont(QFont("微软雅黑", 14))
     msg.exec()
-    profile = {"bait_file": []}
     if msg.clickedButton() == msg.btn_dict["确定"]:
+        if not os.path.exists("config.json"):
+            profile = {"bait_file": []}
+        else:
+            with open("config.json" , "r") as fr:
+                profile = json.load(fr)
+                profile["bait_file"] = []
         for i in range(win.ui.file_table.model().rowCount()):
             file = win.ui.file_table.model().dataX(i, 0)
             profile["bait_file"].append(file)
-        with open("config.json", "w") as f:
+        with open("config.json", "w") as fw:
             try:
-                json.dump(profile, f, indent=4)
+                json.dump(profile, fw, indent=4)
                 # profile["bait_file"].append(file[0])
                 # with open("config.json", "w") as f:
                 #     json.dump(profile, f)

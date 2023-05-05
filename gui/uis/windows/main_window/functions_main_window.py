@@ -13,7 +13,7 @@ from gui.core.json_themes import Themes
 
 
 # FUNCTIONS
-class MainFunctions():
+class MainFunctions:
     def __init__(self):
         super().__init__()
         # SETUP MAIN WINDOw

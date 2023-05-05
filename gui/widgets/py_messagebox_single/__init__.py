@@ -1,1 +1,1 @@
-from .py_messagebox_single import PyMessageBoxSingle
+from . py_messagebox_single import PyMessageBoxSingle

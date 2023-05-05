@@ -1,0 +1,7 @@
+PySide6
+psutil
+httpx
+requests
+pandas
+python-magic-bin
+watchdog

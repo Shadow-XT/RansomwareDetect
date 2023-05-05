@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'main_pagesYqVPtP.ui'
+## Form generated from reading UI file 'main_pagesLiMIhu.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.4.2
+## Created by: Qt User Interface Compiler version 6.5.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -16,8 +16,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QFrame, QGridLayout, QHBoxLayout,
-    QLabel, QScrollArea, QSizePolicy, QSpacerItem,
-    QStackedWidget, QVBoxLayout, QWidget)
+    QLabel, QLayout, QScrollArea, QSizePolicy,
+    QSpacerItem, QStackedWidget, QVBoxLayout, QWidget)
 
 class Ui_MainPages(object):
     def setupUi(self, MainPages):
@@ -105,63 +105,87 @@ class Ui_MainPages(object):
         self.verticalLayout_3.addWidget(self.widget)
 
         self.pages.addWidget(self.page_2_init_file)
-        self.page_3_monitor = QWidget()
-        self.page_3_monitor.setObjectName(u"page_3_monitor")
-        self.verticalLayout_5 = QVBoxLayout(self.page_3_monitor)
+        self.page_4_monitor = QWidget()
+        self.page_4_monitor.setObjectName(u"page_4_monitor")
+        self.verticalLayout_5 = QVBoxLayout(self.page_4_monitor)
         self.verticalLayout_5.setObjectName(u"verticalLayout_5")
-        self.widget_2 = QWidget(self.page_3_monitor)
+        self.widget_2 = QWidget(self.page_4_monitor)
         self.widget_2.setObjectName(u"widget_2")
         self.verticalLayout_4 = QVBoxLayout(self.widget_2)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
-        self.hlayout3_title = QHBoxLayout()
-        self.hlayout3_title.setObjectName(u"hlayout3_title")
+        self.hlayout4_title = QHBoxLayout()
+        self.hlayout4_title.setObjectName(u"hlayout4_title")
         self.label_run = QLabel(self.widget_2)
         self.label_run.setObjectName(u"label_run")
         self.label_run.setFont(font)
 
-        self.hlayout3_title.addWidget(self.label_run, 0, Qt.AlignHCenter)
+        self.hlayout4_title.addWidget(self.label_run, 0, Qt.AlignHCenter)
 
 
-        self.verticalLayout_4.addLayout(self.hlayout3_title)
+        self.verticalLayout_4.addLayout(self.hlayout4_title)
 
-        self.hlayout3_table = QHBoxLayout()
-        self.hlayout3_table.setObjectName(u"hlayout3_table")
+        self.hlayout4_table = QHBoxLayout()
+        self.hlayout4_table.setObjectName(u"hlayout4_table")
 
-        self.verticalLayout_4.addLayout(self.hlayout3_table)
+        self.verticalLayout_4.addLayout(self.hlayout4_table)
 
         self.verticalSpacer = QSpacerItem(10, 10, QSizePolicy.Minimum, QSizePolicy.Fixed)
 
         self.verticalLayout_4.addItem(self.verticalSpacer)
 
-        self.hlayout3_process_button = QHBoxLayout()
-        self.hlayout3_process_button.setObjectName(u"hlayout3_process_button")
-        self.hlayout3_progress = QHBoxLayout()
-        self.hlayout3_progress.setObjectName(u"hlayout3_progress")
+        self.hlayout4_process_button = QHBoxLayout()
+        self.hlayout4_process_button.setObjectName(u"hlayout4_process_button")
+        self.hlayout4_process_button.setSizeConstraint(QLayout.SetDefaultConstraint)
+        self.hlayout4_progress = QHBoxLayout()
+        self.hlayout4_progress.setObjectName(u"hlayout4_progress")
 
-        self.hlayout3_process_button.addLayout(self.hlayout3_progress)
+        self.hlayout4_process_button.addLayout(self.hlayout4_progress)
 
         self.horizontalSpacer = QSpacerItem(20, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.hlayout3_process_button.addItem(self.horizontalSpacer)
+        self.hlayout4_process_button.addItem(self.horizontalSpacer)
 
-        self.glayout3_button = QGridLayout()
-        self.glayout3_button.setSpacing(2)
-        self.glayout3_button.setObjectName(u"glayout3_button")
+        self.glayout4_button = QGridLayout()
+        self.glayout4_button.setSpacing(2)
+        self.glayout4_button.setObjectName(u"glayout4_button")
 
-        self.hlayout3_process_button.addLayout(self.glayout3_button)
+        self.hlayout4_process_button.addLayout(self.glayout4_button)
 
-        self.hlayout3_process_button.setStretch(0, 3)
-        self.hlayout3_process_button.setStretch(2, 2)
+        self.hlayout4_process_button.setStretch(0, 3)
+        self.hlayout4_process_button.setStretch(2, 2)
 
-        self.verticalLayout_4.addLayout(self.hlayout3_process_button)
+        self.verticalLayout_4.addLayout(self.hlayout4_process_button)
 
 
         self.verticalLayout_5.addWidget(self.widget_2)
 
-        self.pages.addWidget(self.page_3_monitor)
-        self.page_4_database = QWidget()
-        self.page_4_database.setObjectName(u"page_4_database")
-        self.pages.addWidget(self.page_4_database)
+        self.pages.addWidget(self.page_4_monitor)
+        self.page_3_database = QWidget()
+        self.page_3_database.setObjectName(u"page_3_database")
+        self.verticalLayout_6 = QVBoxLayout(self.page_3_database)
+        self.verticalLayout_6.setObjectName(u"verticalLayout_6")
+        self.label_database = QLabel(self.page_3_database)
+        self.label_database.setObjectName(u"label_database")
+        self.label_database.setFont(font)
+
+        self.verticalLayout_6.addWidget(self.label_database, 0, Qt.AlignHCenter)
+
+        self.hlayout3_connect = QHBoxLayout()
+        self.hlayout3_connect.setObjectName(u"hlayout3_connect")
+
+        self.verticalLayout_6.addLayout(self.hlayout3_connect)
+
+        self.hlayout3_loginfo = QHBoxLayout()
+        self.hlayout3_loginfo.setObjectName(u"hlayout3_loginfo")
+
+        self.verticalLayout_6.addLayout(self.hlayout3_loginfo)
+
+        self.hlayout3_pagination = QHBoxLayout()
+        self.hlayout3_pagination.setObjectName(u"hlayout3_pagination")
+
+        self.verticalLayout_6.addLayout(self.hlayout3_pagination)
+
+        self.pages.addWidget(self.page_3_database)
         self.page_2 = QWidget()
         self.page_2.setObjectName(u"page_2")
         self.page_2_layout = QVBoxLayout(self.page_2)
@@ -252,7 +276,7 @@ class Ui_MainPages(object):
 
         self.retranslateUi(MainPages)
 
-        self.pages.setCurrentIndex(2)
+        self.pages.setCurrentIndex(3)
 
 
         QMetaObject.connectSlotsByName(MainPages)
@@ -263,6 +287,7 @@ class Ui_MainPages(object):
         self.label.setText(QCoreApplication.translate("MainPages", u"Welcome To PyOneDark GUI", None))
         self.label_set_file.setText(QCoreApplication.translate("MainPages", u"\u8bf1\u9975\u6587\u4ef6\u914d\u7f6e", None))
         self.label_run.setText(QCoreApplication.translate("MainPages", u"\u6267\u884c\u68c0\u6d4b", None))
+        self.label_database.setText(QCoreApplication.translate("MainPages", u"\u6570\u636e\u5e93\u9875\u9762", None))
         self.title_label.setText(QCoreApplication.translate("MainPages", u"Custom Widgets Page", None))
         self.description_label.setText(QCoreApplication.translate("MainPages", u"Here will be all the custom widgets, they will be added over time on this page.\n"
 "I will try to always record a new tutorial when adding a new Widget and updating the project on Patreon before launching on GitHub and GitHub after the public release.", None))

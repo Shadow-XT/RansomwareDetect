@@ -32,7 +32,7 @@
    <item>
     <widget class="QStackedWidget" name="pages">
      <property name="currentIndex">
-      <number>2</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="page_1_home">
       <property name="styleSheet">
@@ -176,13 +176,13 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="page_3_monitor">
+     <widget class="QWidget" name="page_4_monitor">
       <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
         <widget class="QWidget" name="widget_2" native="true">
          <layout class="QVBoxLayout" name="verticalLayout_4">
           <item>
-           <layout class="QHBoxLayout" name="hlayout3_title">
+           <layout class="QHBoxLayout" name="hlayout4_title">
             <item alignment="Qt::AlignHCenter">
              <widget class="QLabel" name="label_run">
               <property name="font">
@@ -198,7 +198,7 @@
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="hlayout3_table"/>
+           <layout class="QHBoxLayout" name="hlayout4_table"/>
           </item>
           <item>
            <spacer name="verticalSpacer">
@@ -217,12 +217,12 @@
            </spacer>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="hlayout3_process_button" stretch="3,0,2">
+           <layout class="QHBoxLayout" name="hlayout4_process_button" stretch="3,0,2">
             <property name="sizeConstraint">
              <enum>QLayout::SetDefaultConstraint</enum>
             </property>
             <item>
-             <layout class="QHBoxLayout" name="hlayout3_progress"/>
+             <layout class="QHBoxLayout" name="hlayout4_progress"/>
             </item>
             <item>
              <spacer name="horizontalSpacer">
@@ -238,7 +238,7 @@
              </spacer>
             </item>
             <item>
-             <layout class="QGridLayout" name="glayout3_button">
+             <layout class="QGridLayout" name="glayout4_button">
               <property name="spacing">
                <number>2</number>
               </property>
@@ -251,7 +251,31 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="page_4_database"/>
+     <widget class="QWidget" name="page_3_database">
+      <layout class="QVBoxLayout" name="verticalLayout_6" stretch="0,0,0,0">
+       <item alignment="Qt::AlignHCenter">
+        <widget class="QLabel" name="label_database">
+         <property name="font">
+          <font>
+           <pointsize>20</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>数据库页面</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="hlayout3_connect"/>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="hlayout3_loginfo"/>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="hlayout3_pagination"/>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="page_2">
       <layout class="QVBoxLayout" name="page_2_layout">
        <property name="spacing">

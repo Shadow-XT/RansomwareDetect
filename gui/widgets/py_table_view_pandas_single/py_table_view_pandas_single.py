@@ -8,7 +8,7 @@ from pandas import DataFrame
 
 from util import calculate_entropy, PandasModel
 from util.__call_function__ import __call_msgbox__
-from util.functions import get_file_info
+from util.file_function import get_file_info
 from .style import *
 from .. import PyMessageBoxSingle
 
@@ -51,8 +51,8 @@ class PyTableViewPandasSingle(QTableView):
         self._model = PandasModel(data, haveOperation=False)
         super(PyTableViewPandasSingle, self).setModel(self._model)
 
-    def setModelX(self, data: DataFrame, floatRule):
-        self._model = PandasModel(data, haveOperation=False, floatRule=floatRule)
+    def setModelX(self, data: DataFrame, floatRule=None, vertical=None):
+        self._model = PandasModel(data, haveOperation=False, floatRule=floatRule, vertical=vertical)
         super(PyTableViewPandasSingle, self).setModel(self._model)
 
     # @property

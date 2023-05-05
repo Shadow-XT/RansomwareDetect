@@ -68,3 +68,7 @@ from .py_table_view import PyTableView
 # ///////////////////////////////////////////////////////////////
 from .py_table_view_pandas_button import PyTableViewPandasWithButton
 from .py_table_view_pandas_single import PyTableViewPandasSingle
+
+# Py Pagination
+# ///////////////////////////////////////////////////////////////
+from .py_pagination import py_pagination
