@@ -5,4 +5,7 @@ __pycache__/
 .idea/
 .git/
 .pyc
+main.back.py
+MinotorThread.bak1.py
+MinotorThread.bak2.py
 /test/

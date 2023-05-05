@@ -1,7 +1,6 @@
 import json
 import os
 import re
-
 import httpx
 import requests
 from PySide6.QtCore import Slot, Qt

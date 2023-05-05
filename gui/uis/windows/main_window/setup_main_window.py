@@ -70,8 +70,8 @@ class SetupMainWindow:
         {
             "btn_icon": "icon_widgets.svg",  # 自定义组件显示菜单
             "btn_id": "btn_widgets",
-            "btn_text": "Show Custom Widgets",
-            "btn_tooltip": "Show custom widgets",
+            "btn_text": "自定义组件",
+            "btn_tooltip": "自定义组件页面",
             "show_top": True,
             "is_active": False
         },
