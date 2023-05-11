@@ -68,7 +68,7 @@ def btn_save_profile_slot(win: QMainWindow):
         if not os.path.exists("config.json"):
             profile = {"bait_file": []}
         else:
-            with open("config.json" , "r") as fr:
+            with open("config.json", "r") as fr:
                 profile = json.load(fr)
                 profile["bait_file"] = []
         for i in range(win.ui.file_table.model().rowCount()):
@@ -96,6 +96,8 @@ def btn_load_file_slot(win: QMainWindow):
         __call_msgbox__("提示", "未选择文件", win)
         return
     table = win.ui.file_table
+    select_file_dir = os.path.dirname(select_file)
+    select_file_size_k = os.path.getsize(select_file) // 1024
     # 添加文件到TableView
     if table:
         # 判断设置的文件是不是已经存在与列表中
@@ -103,6 +105,12 @@ def btn_load_file_slot(win: QMainWindow):
             if table.model().dataX(i, 0) == select_file:
                 __call_msgbox__("提示", "文件已存在", win)
                 return
+            file = table.model().dataX(i, 0)
+            dirx = os.path.dirname(file)
+            if dirx == select_file_dir:
+                if abs(select_file_size_k - os.path.getsize(file) // 1024) < 3:
+                    __call_msgbox__("提示", "同一目录下的文件大小不能相近", win)
+                    return
         # 获取文件的类型和大小
         info = get_file_info(select_file)
         if info is None:

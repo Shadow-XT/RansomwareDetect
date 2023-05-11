@@ -6,8 +6,8 @@ class PandasModel(QAbstractTableModel):
         super().__init__()
         if haveOperation:
             data['操作'] = None
-        if vertical is not None:
-            self._vertical = vertical
+        self._vertical = vertical
+
         self.floatRule = floatRule
         self._data = data
 

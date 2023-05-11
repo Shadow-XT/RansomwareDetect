@@ -1,4 +1,5 @@
 import os
+from time import sleep
 
 from PySide6.QtCore import QThread, Signal
 from watchdog.events import FileSystemEventHandler
@@ -9,72 +10,82 @@ from util.fsutil import get_filename_by_fileid
 
 
 class BaitFileSystemEventHandler(FileSystemEventHandler):
-    def __init__(self, call_back, dirs, files, id_to_file):
+    def __init__(self, call_back, dirs, files, id_to_file, file_to_id):
         super().__init__()
         # self.file_dir_list = file_dir_list
         self._call_back = call_back
         self._dirs = dirs
         self._files = files
         self._id_to_file = id_to_file
-
-        # dirx = os.path.join(os.path.expanduser("~"), ".afiles")
-        # file_with_dir = [os.path.join(dirx, file) for file in os.listdir(dirx)]
-        # self.files = [file.replace("\\", "/") for file in file_with_dir if os.path.isfile(file)]
-        # self.size_to_file = {}
-        # for file in self.files:
-        #     self.size_to_file[os.path.getsize(file) // 1024] = file
-        # 将上面循环改为一行代码
-        # self.size_to_file = {os.path.getsize(file) // 1024: file for file in self.files}
-        # print(self.size_to_file)
-        # self.file_size = list(self.size_to_file.keys())
-        # print(self.file_size)
-        # 被感染的文件
+        self._file_to_id = file_to_id
         self._infected = []
-        pprint(self._files)
 
     def on_modified(self, event):
         if event.is_directory:
             return
+        # if "ntuser.dat." in event.src_path:
+        #     return
         src_path = event.src_path.replace("\\", "/")
         # 被感染的文件无需再次发射信号
         if src_path in self._infected:
             return
-        if src_path in self._files:
-            return
 
+        dirx = os.path.dirname(src_path)
+        currfile = None
         try:
-            size = os.path.getsize(src_path) // 1024
-            dirx = os.path.dirname(src_path)
-            if dirx not in self._dirs:
-                return
-            if size in self._id_to_file[dirx].keys():
-                pass
-            elif (size - 1) in self._id_to_file[dirx].keys():
-                size -= 1
+            if src_path in self._files:
+                idx = self._file_to_id[dirx][src_path][0]
+                index = self._file_to_id[dirx][src_path][1]
+                for file in os.listdir(dirx):
+                    abs_file = f'{dirx}/{file}'
+                    if os.path.isfile(abs_file):
+                        size = os.path.getsize(abs_file) // 1024
+                        if size == idx or size - 1 == idx or size - 2 == idx:
+                            currfile = file
+                            self._infected.append(abs_file)
+                            self._infected.append(currfile)
+                            print(f"{idx} modify {src_path} -> {currfile}")
+                            self._call_back.emit({"dir": dirx, "src": (src_path, index), "cur": currfile})
+                            return
             else:
-                return
-            # pprint(f"{size} modify {self._id_to_file[dirx][size]} -> {src_path}")
-            self._infected.append(src_path)
-            self._call_back.emit({"src": self._id_to_file[dirx][size], "cur": os.path.basename(src_path)})
-        except FileNotFoundError:
-            pass
-            # pprint(f"file not found {src_path}")
+                size = os.path.getsize(src_path) // 1024
+                if size in self._id_to_file[dirx].keys():
+                    pass
+                elif size - 1 in self._id_to_file[dirx].keys():
+                    size -= 1
+                elif size - 2 in self._id_to_file[dirx].keys():
+                    size -= 2
+                else:
+                    return
+                self._infected.append(src_path)
+                currfile = os.path.basename(src_path)
+                src_path, index = self._id_to_file[dirx][size]
+                self._infected.append(src_path)
+                print(f"{size} modify {src_path} -> {currfile}")
+                self._call_back.emit({"dir": dirx, "src": (src_path, index), "cur": currfile})
+        except FileNotFoundError as e:
+            print(e)
+
+    def on_moved(self, event):
+        if event.is_directory:
+            return
+        if event.src_path not in self._files:
+            return
+        print(f"on moved: {event.src_path}=>{event.dest_path}")
 
 
 class MonitorThread(QThread):
     call_back = Signal(dict)
 
-    def __init__(self, dirs, files, id_to_file):
+    def __init__(self, dirs, files, id_to_file, file_to_id):
         super().__init__()
         self._dirs = dirs
         self._files = files
         self._id_to_file = id_to_file
-        # self._dirs = set()
-        # for file in file_to_id.keys():
-        #     #  获取文件盘符
-        #     self._dirs.add(os.path.dirname(file))
+        self._file_to_id = file_to_id
         self._observer = Observer()
-        self._bait_event_handler = BaitFileSystemEventHandler(self.call_back, self._dirs, self._files, self._id_to_file)
+        self._bait_event_handler = BaitFileSystemEventHandler(self.call_back, self._dirs, self._files,
+                                                              self._id_to_file, self._file_to_id)
         for bait_dir in self._dirs:
             self._observer.schedule(self._bait_event_handler, bait_dir, recursive=False)
 
@@ -110,26 +121,3 @@ class MonitorThread(QThread):
                 self._observer.stop()
                 self._observer = None
             self._observer.join()
-
-    # def __init__(self, signal, file_to_id, id_to_file):
-    #     super().__init__()
-    #     self.signal = signal
-    #     self.file_to_id = file_to_id
-    #     self.id_to_file = id_to_file
-    #     self.files = list(file_to_id.keys())
-    #     self.ignore_directories = True
-    #
-    # def on_modified(self, event):
-    #     if event.is_directory:
-    #         return
-    #     src_path = os.path.normpath(event.src_path).replace("\\", "/")
-    #     # print(f"modify {src_path}")
-    #     dir = os.path.dirname(src_path)
-    #
-    #     # # TODO 等待完成功能
-    #     # if src_path in self.files:
-    #     #     id = self.file_to_id[src_path]
-    #     #     driver = os.path.splitdrive(src_path)[0]
-    #     #     dst_path = get_filename_by_fileid(driver, id)
-    #     #     self.signal.emit({"type": "modify", "id": id, "src_path": src_path, "dst_path": dst_path})
-    #     # print(event.src_path)

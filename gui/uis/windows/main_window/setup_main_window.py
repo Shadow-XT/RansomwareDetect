@@ -397,6 +397,7 @@ class SetupMainWindow:
             bg_color_hover=self.themes["app_color"]["dark_three"],
             bg_color_pressed=self.themes["app_color"]["dark_four"])
         self.ui.btn_db_connect.setMinimumWidth(120)
+        self.logurl = None
         self.ui.btn_save_url = PyPushButton(
             heigh="50px",
             text="保存链接",
@@ -457,7 +458,7 @@ class SetupMainWindow:
         self.ui.database_table.setColumnWidth(2, 330)
         self.ui.database_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.Stretch)
         self.ui.load_pages.hlayout3_loginfo.addWidget(self.ui.database_table)
-        self.ui.pagination = PyPagination(0, 10, self.themes)
+        self.ui.pagination = PyPagination(0, 15, self.themes)
         self.ui.load_pages.hlayout3_pagination.addWidget(self.ui.pagination)
         self.ui.database_table.verticalHeader().setStyleSheet(f'background-color: {colorx};')
         self.ui.database_table.setSelectionBehavior(QAbstractItemView.SelectRows)
@@ -544,7 +545,7 @@ class SetupMainWindow:
         )
         self.ui.btn_monitor_start = PyPushButton(
             heigh="40px",
-            text="开始检测",
+            text="开始监控",
             radius=8,
             color=self.themes["app_color"]["text_foreground"],
             bg_color=self.themes["app_color"]["dark_one"],
@@ -562,7 +563,7 @@ class SetupMainWindow:
         # )
         self.ui.btn_monitor_stop = PyPushButton(
             heigh="40px",
-            text="结束检测",
+            text="结束监控",
             radius=8,
             color=self.themes["app_color"]["text_foreground"],
             bg_color=self.themes["app_color"]["dark_one"],
@@ -572,7 +573,7 @@ class SetupMainWindow:
         )
         self.ui.btn_monitor_restart = PyPushButton(
             heigh="40px",
-            text="重新检测",
+            text="重新开始",
             radius=8,
             color=self.themes["app_color"]["text_foreground"],
             bg_color=self.themes["app_color"]["dark_one"],

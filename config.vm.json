@@ -1,0 +1,32 @@
+{
+  "bait_file": [
+    "C:/Users/Shadow/.a_doc.docx",
+    "C:/Users/Shadow/.a_jpg.jpg",
+    "C:/Users/Shadow/.a_pdf.pdf",
+    "C:/Users/Shadow/.a_png.png",
+    "C:/Users/Shadow/Z_doc.docx",
+    "C:/Users/Shadow/Z_jpg.jpg",
+    "C:/Users/Shadow/Z_png.png",
+    "C:/Users/Shadow/Z_pdf.pdf",
+    "C:/Users/Shadow/.afiles/01_document_doc.docx",
+    "C:/Users/Shadow/.afiles/01_document_pdf.pdf",
+    "C:/Users/Shadow/.afiles/01_picture_jpg.jpg",
+    "C:/Users/Shadow/.afiles/01_picture_png.png",
+    "C:/Users/Shadow/afiles/02_document_doc.docx",
+    "C:/Users/Shadow/afiles/02_picture_png.png",
+    "C:/Users/Shadow/afiles/02_document_pdf.pdf",
+    "C:/Users/Shadow/afiles/02_picture_jpg.jpg",
+    "C:/Users/Shadow/Zfiles/03_document_doc.docx",
+    "C:/Users/Shadow/Zfiles/03_document_pdf.pdf",
+    "C:/Users/Shadow/Zfiles/03_picture_jpg.jpg",
+    "C:/Users/Shadow/Zfiles/03_picture_png.png",
+    "C:/Users/Shadow/Documents/doc.docx",
+    "C:/Users/Shadow/Documents/jpg.jpg",
+    "C:/Users/Shadow/Documents/pdf.pdf",
+    "C:/Users/Shadow/Documents/png.png"
+  ],
+  "api": {
+    "host": "192.168.142.1",
+    "port": "5003"
+  }
+}

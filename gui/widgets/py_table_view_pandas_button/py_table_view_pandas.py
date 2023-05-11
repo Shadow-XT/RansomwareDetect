@@ -130,18 +130,25 @@ class PyTableViewPandasWithButton(QTableView):
         if btn:
             index = self.indexAt(btn.parent().pos()).row()
             # 打开文件选择弹框，文件过滤为可全部
-            file = QFileDialog.getOpenFileName(self, "选择文件", os.path.expanduser("~"), "All Files(*.*)")[0]
-            print(file, index)
-            if file:
+            select_file = QFileDialog.getOpenFileName(self, "选择文件", os.path.expanduser("~"), "All Files(*.*)")[0]
+            select_file_dir = os.path.dirname(select_file)
+            select_file_size_k = os.path.getsize(select_file) // 1024
+            if select_file:
                 for i in range(self.model().rowCount()):
-                    if file == self.model().dataX(i, 0):
+                    if select_file == self.model().dataX(i, 0):
                         __call_msgbox__("提示", "不可以选相同的文件", self._ui, self)
                         return
-                info = get_file_info(file)
+                    file = self.model().dataX(i, 0)
+                    dirx = os.path.dirname(file)
+                    if dirx == select_file_dir:
+                        if abs(select_file_size_k - os.path.getsize(file) // 1024) < 3:
+                            __call_msgbox__("提示", "同一目录下的文件大小不能相近", self._ui, self)
+                            return
+                info = get_file_info(select_file)
                 if info is None:
                     __call_msgbox__("错误", "读取文件信息失败", self._ui, self)
                     return
-                self.model().updateRow(index, (file, info[0] if info[0] else "未知", info[1]))
+                self.model().updateRow(index, (select_file, info[0] if info[0] else "未知", info[1]))
             else:
                 __call_msgbox__("提示", "未选择文件", self._ui, self)
 

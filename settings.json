@@ -3,15 +3,15 @@
   "version": "v1.0.0",
   "copyright": "Powered By ZhangJiangHong",
   "year": 2023,
-  "theme_name": "dracula",
+  "theme_name": "default",
   "custom_title_bar": true,
   "default_size": [
     1400,
-    720
+    750
   ],
   "startup_size": [
     1360,
-    700
+    770
   ],
   "minimum_size": [
     1250,

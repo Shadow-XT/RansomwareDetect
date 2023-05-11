@@ -5,3 +5,4 @@ requests
 pandas
 python-magic-bin
 watchdog
+PySide6-Fluent-Widgets

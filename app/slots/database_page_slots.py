@@ -52,6 +52,7 @@ def btn_db_connect_slot(win):
             __call_msgbox__("提示", "连接成功", win)
             win.isConnected = True
             win.url = f'http://{ip}:{port}'
+            win.logurl = f'http://{ip}:{port}/api/Log/WriteLog'
         else:
             __call_msgbox__("错误", "连接失败", win)
         return

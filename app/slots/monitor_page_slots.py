@@ -3,8 +3,9 @@ import time
 from pprint import pprint
 import httpx
 
-from PySide6.QtCore import Slot
+from PySide6.QtCore import Slot, Qt
 from PySide6.QtWidgets import QMainWindow
+from qfluentwidgets import InfoBar, InfoBarPosition
 
 from util import MonitorThread, calculate_file_head_hash, calculate_entropy, __call_msgbox__
 
@@ -35,6 +36,9 @@ def btn_monitor_load_slot(win: QMainWindow):
 
 @Slot(QMainWindow)
 def btn_monitor_start_slot(win: QMainWindow):
+    if win.logurl is None:
+        __call_msgbox__("错误", "请先设置日志服务器", win)
+        return
     if win.monitor_thread is not None and win.monitor_thread.isRunning():
         __call_msgbox__("错误", "监控检测已经启动", win)
         return
@@ -42,6 +46,7 @@ def btn_monitor_start_slot(win: QMainWindow):
         __call_msgbox__("错误", "请先加载文件", win)
         return
     id_to_file = {}
+    file_to_id = {}
     files = []
     dirs = set()
     win.prev_info = {}
@@ -52,17 +57,21 @@ def btn_monitor_start_slot(win: QMainWindow):
         # 确保子字典存在
         if file_dir not in id_to_file:
             id_to_file[file_dir] = {}
+            file_to_id[file_dir] = {}
         id_to_file[file_dir][file_id] = (file_abs, index)
+        file_to_id[file_dir][file_abs] = (file_id, index)
         files.append(file_abs)
         dirs.add(file_dir)
         win.prev_info[index] = {"currname": file_abs,
                                 "file_entropy": calculate_entropy(file_abs, 0.8),
                                 "file_head_hash": calculate_file_head_hash(file_abs),
                                 "file_size": os.path.getsize(file_abs),
-                                "file_mtime": os.path.getmtime(file_abs)}
+                                "file_mtime": time.strftime("%Y-%m-%d %H:%M:%S",
+                                                            time.gmtime(os.path.getmtime(file_abs))),
+                                }
 
     win.infected = 0
-    win.monitor_thread = MonitorThread(dirs, files, id_to_file)
+    win.monitor_thread = MonitorThread(dirs, files, id_to_file,file_to_id)
     win.monitor_thread.call_back.connect(lambda info: monitor_accept(win, info))
     win.monitor_thread.start()
     __call_msgbox__("提示", "监控已启动", win)
@@ -77,15 +86,17 @@ def monitor_accept(win, info: dict):
 
     index = win.ui.monitor_table.model().index(info['src'][1], 2)
     win.ui.monitor_table.model().setData(index, info['cur'])
+    currfile = f"{info['dir']}/{info['cur']}"
+    file_entropy = calculate_entropy(currfile, 0.8)
+    file_head_hash = calculate_file_head_hash(currfile)
+    # pprint(f"file_entropy:{win.prev_info[info['src'][1]]['file_entropy']}->{file_entropy},"
+    #        f" file_head_hash:{win.prev_info[info['src'][1]]['file_head_hash']}->{file_head_hash}")
 
-    file_entropy = calculate_entropy(info['cur'], 0.8)
-    file_head_hash = calculate_file_head_hash(info['cur'])
-
-    res = httpx.post(data={
+    res = httpx.post(win.logurl, data={
         "src": info['src'][0],
         "curr": info['cur'],
-        "pmtime": win.prev[info['src'][1]]["file_mtime"],
-        "mtime": time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(os.path.getmtime(info['cur']))),
+        "pmtime": win.prev_info[info['src'][1]]["file_mtime"],
+        "mtime": time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(os.path.getmtime(currfile))),
         "pentropy": win.prev_info[info['src'][1]]["file_entropy"],
         "entropy": file_entropy,
         "pheadHash": win.prev_info[info['src'][1]]["file_head_hash"],
@@ -96,6 +107,25 @@ def monitor_accept(win, info: dict):
     if file_head_hash != win.prev_info[info['src'][1]]["file_head_hash"] and \
             file_entropy > win.prev_info[info['src'][1]]["file_entropy"]:
         win.infected += 1
+    if win.infected == 4:
+        InfoBar.warning(
+            title='警告',
+            content=f'有{win.infected}个文件被篡改，疑似被感染',
+            orient=Qt.Horizontal,
+            isClosable=True,
+            position=InfoBarPosition.TOP,
+            duration=1000,  # won't disappear automatically
+            parent=win).show()
+    if win.infected == 8:
+        InfoBar.error(
+            title='警告',
+            content=f'系统被感染，请立即采取措施',
+            orient=Qt.Horizontal,
+            isClosable=True,
+            position=InfoBarPosition.TOP,
+            duration=-1,  # won't disappear automatically
+            parent=win).show()
+    print(f"infected {win.infected}")
 
 
 @Slot(QMainWindow)
@@ -110,6 +140,7 @@ def btn_monitor_stop_slot(win: QMainWindow):
         win.ui.btn_monitor_start.setEnabled(True)
     else:
         __call_msgbox__("提示", "监控检测未启动", win)
+
 
 # @Slot(QMainWindow)
 # def btn_monitor_pause(win: QMainWindow):
